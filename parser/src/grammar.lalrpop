@@ -5,6 +5,7 @@ use lalrpop_util::ParseError;
 grammar;
 
 pub Term: Term = {
+    <s:Symbol> => Term::Symbol(s),
     <n:Number> => Term::Num(n),
     <s:String> => Term::Str(s),
     "(" <t:Term> ")" => t,
@@ -21,4 +22,8 @@ Number: Num = {
 String: String = {
     <s:r"'[^\n]*'"> => s[1..s.len()-1].to_string(),
     <s:r#""[^\n]*""#> => s[1..s.len()-1].to_string(),
+}
+
+Symbol: Symbol = {
+    <s:r"[a-zA-Z_$][a-zA-Z0-9_$]*"> => Symbol { id: 0, name: s.to_string() },
 }

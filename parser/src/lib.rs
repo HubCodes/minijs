@@ -60,4 +60,22 @@ mod tests {
         let parse_result = TERM_PARSER.parse("\"Hello, world!\"").unwrap();
         assert_eq!(Term::Str("Hello, world!".to_string()), parse_result);
     }
+
+    #[test]
+    fn string_literal_empty() {
+        let parse_result = TERM_PARSER.parse("''").unwrap();
+        assert_eq!(Term::Str("".to_string()), parse_result);
+    }
+
+    #[test]
+    fn string_literal_one_char() {
+        let parse_result = TERM_PARSER.parse("'1'").unwrap();
+        assert_eq!(Term::Str("1".to_string()), parse_result);
+    }
+
+    #[test]
+    fn symbol() {
+        let parse_result = TERM_PARSER.parse("name").unwrap();
+        assert_eq!(Term::Symbol(Symbol { id: 0, name: "name".to_string() }), parse_result);
+    }
 }
