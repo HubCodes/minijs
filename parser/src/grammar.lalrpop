@@ -5,11 +5,11 @@ use lalrpop_util::ParseError;
 grammar;
 
 pub Term: Term = {
-    <n:Num> => Term::Int(n),
+    <n:Int> => Term::Int(n),
     "(" <t:Term> ")" => t,
 };
 
-Num: i32 = {
+Int: i32 = {
     r"[0-9]+" =>? i32::from_str(<>).map_err(|_| ParseError::User {
         error: "Too big number"
     }),

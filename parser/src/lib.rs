@@ -20,19 +20,19 @@ mod tests {
     }
 
     #[test]
-    fn positive_number() {
+    fn positive_int() {
         let parse_result = TERM_PARSER.parse("42").unwrap();
         assert_eq!(Term::Int(42), parse_result);
     }
 
     #[test]
-    fn negative_number() {
+    fn negative_int() {
         let is_err = TERM_PARSER.parse("-42").is_err();
         assert_eq!(true, is_err);
     }
 
     #[test]
-    fn too_big_number() {
+    fn too_big_int() {
         let is_err = TERM_PARSER.parse("12345678912345678912345").is_err();
         assert_eq!(true, is_err);
     }
