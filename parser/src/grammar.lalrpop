@@ -4,11 +4,15 @@ use lalrpop_util::ParseError;
 
 grammar;
 
+pub Expr: Expr = {
+    <t:Term> => Expr::Term(t),
+    <e:Expr> "[" <i:Expr> "]" => Expr::Unop(Unop::Index, Box::new(e), Box::new(i)),
+}
+
 pub Term: Term = {
     <s:Symbol> => Term::Symbol(s),
     <n:Number> => Term::Num(n),
     <s:String> => Term::Str(s),
-    "(" <t:Term> ")" => t,
 };
 
 Number: Num = {

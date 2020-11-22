@@ -17,6 +17,7 @@ mod tests {
 
     lazy_static! {
         static ref TERM_PARSER: grammar::TermParser = grammar::TermParser::new();
+        static ref EXPR_PARSER: grammar::ExprParser = grammar::ExprParser::new();
     }
 
     #[test]
@@ -77,5 +78,14 @@ mod tests {
     fn symbol() {
         let parse_result = TERM_PARSER.parse("name").unwrap();
         assert_eq!(Term::Symbol(Symbol { id: 0, name: "name".to_string() }), parse_result);
+    }
+
+    #[test]
+    fn postfix_expr_indexing() {
+        let parse_result = EXPR_PARSER.parse("a[1]").unwrap();
+        let target_symbol = Expr::Term(Term::Symbol(Symbol { id: 0, name: "a".to_string() }));
+        let target_index = Expr::Term(Term::Num(Num::Int(1)));
+        let expected = Expr::Unop(Unop::Index, Box::new(target_symbol), Box::new(target_index));
+        assert_eq!(expected, parse_result);
     }
 }
