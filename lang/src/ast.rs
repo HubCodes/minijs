@@ -5,6 +5,7 @@ pub enum Expr {
 #[derive(Debug, PartialEq)]
 pub enum Term {
     Num(Num),
+    Str(String),
 }
 
 #[derive(Debug, PartialEq)]

@@ -48,4 +48,16 @@ mod tests {
         let parse_result = TERM_PARSER.parse("42.2e-3").unwrap();
         assert_eq!(Term::Num(Num::Double(42.2e-3)), parse_result);
     }
+
+    #[test]
+    fn string_literal_singlequote() {
+        let parse_result = TERM_PARSER.parse("'Hello, world!'").unwrap();
+        assert_eq!(Term::Str("Hello, world!".to_string()), parse_result);
+    }
+
+    #[test]
+    fn string_literal_doublequote() {
+        let parse_result = TERM_PARSER.parse("\"Hello, world!\"").unwrap();
+        assert_eq!(Term::Str("Hello, world!".to_string()), parse_result);
+    }
 }

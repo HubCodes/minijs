@@ -6,6 +6,7 @@ grammar;
 
 pub Term: Term = {
     <n:Number> => Term::Num(n),
+    <s:String> => Term::Str(s),
     "(" <t:Term> ")" => t,
 };
 
@@ -15,4 +16,9 @@ Number: Num = {
             error: "Invalid number"
         })
     ),
+}
+
+String: String = {
+    <s:r"'[^\n]*'"> => s[1..s.len()-1].to_string(),
+    <s:r#""[^\n]*""#> => s[1..s.len()-1].to_string(),
 }
