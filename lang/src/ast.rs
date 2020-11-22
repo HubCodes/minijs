@@ -4,6 +4,11 @@ pub enum Expr {
 
 #[derive(Debug, PartialEq)]
 pub enum Term {
+    Num(Num),
+}
+
+#[derive(Debug, PartialEq)]
+pub enum Num {
     Int(i32),
-    Error,
+    Double(f64),
 }

@@ -5,12 +5,14 @@ use lalrpop_util::ParseError;
 grammar;
 
 pub Term: Term = {
-    <n:Int> => Term::Int(n),
+    <n:Number> => Term::Num(n),
     "(" <t:Term> ")" => t,
 };
 
-Int: i32 = {
-    r"[0-9]+" =>? i32::from_str(<>).map_err(|_| ParseError::User {
-        error: "Too big number"
-    }),
+Number: Num = {
+    r"[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?" =>? i32::from_str(<>).map(Num::Int).or(
+        f64::from_str(<>).map(Num::Double).map_err(|_| ParseError::User {
+            error: "Invalid number"
+        })
+    ),
 }
