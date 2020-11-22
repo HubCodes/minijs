@@ -31,11 +31,9 @@ mod tests {
         assert_eq!(true, is_err);
     }
 
-    /*
     #[test]
     fn too_big_number() {
         let is_err = TERM_PARSER.parse("12345678912345678912345").is_err();
         assert_eq!(true, is_err);
     }
-     */
 }

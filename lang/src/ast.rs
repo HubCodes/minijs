@@ -5,6 +5,5 @@ pub enum Expr {
 #[derive(Debug, PartialEq)]
 pub enum Term {
     Int(i32),
+    Error,
 }
-
-

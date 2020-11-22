@@ -1,5 +1,6 @@
 use std::str::FromStr;
 use lang::ast::*;
+use lalrpop_util::ParseError;
 
 grammar;
 
@@ -8,4 +9,8 @@ pub Term: Term = {
     "(" <t:Term> ")" => t,
 };
 
-Num: i32 = <s:r"[0-9]+"> => i32::from_str(s).unwrap();
+Num: i32 = {
+    r"[0-9]+" =>? i32::from_str(<>).map_err(|_| ParseError::User {
+        error: "Too big number"
+    }),
+}
