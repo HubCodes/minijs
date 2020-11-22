@@ -1,9 +1,10 @@
 use std::str::FromStr;
+use lang::ast::*;
 
 grammar;
 
-pub Term: i32 = {
-    <n:Num> => n,
+pub Term: Term = {
+    <n:Num> => Term::Int(n),
     "(" <t:Term> ")" => t,
 };
 

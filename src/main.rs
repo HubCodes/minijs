@@ -1,5 +1,5 @@
 use parser::parse;
 
 fn main() {
-    println!("{}", parse("(22)"));
+    println!("{:#?}", parse("(22)"));
 }
