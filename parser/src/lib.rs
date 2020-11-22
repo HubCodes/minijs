@@ -26,9 +26,9 @@ mod tests {
     }
 
     #[test]
+    #[should_panic]
     fn negative_int() {
-        let is_err = TERM_PARSER.parse("-42").is_err();
-        assert_eq!(true, is_err);
+        TERM_PARSER.parse("-42").unwrap();
     }
 
     #[test]
