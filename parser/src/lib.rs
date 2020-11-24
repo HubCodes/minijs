@@ -4,14 +4,14 @@ mod state;
 #[macro_use] extern crate lazy_static;
 
 use state::State;
-use lang::ast::Term;
+use lang::ast::*;
 use lalrpop_util::{ParseError, lexer};
 
 lalrpop_mod!(grammar);
 
-pub fn parse(code: &str) -> Result<Term, ParseError<usize, lexer::Token, &str>> {
+pub fn parse(code: &str) -> Result<Expr, ParseError<usize, lexer::Token, &str>> {
     let mut state = State::new();
-    grammar::TermParser::new().parse(&mut state, code)
+    grammar::ExprParser::new().parse(&mut state, code)
 }
 
 #[cfg(test)]
@@ -112,7 +112,7 @@ mod tests {
         let parse_result = EXPR_PARSER.parse(&mut state, "a[1]").unwrap();
         let target_symbol = Expr::Term(Term::Symbol(Symbol { id: 0, name: "a".to_string() }));
         let target_index = Expr::Term(Term::Num(Num::Int(1)));
-        let expected = Expr::Unop(Unop::Index, Box::new(target_symbol), Box::new(target_index));
+        let expected = Expr::Binop(Binop::Index, Box::new(target_symbol), Box::new(target_index));
         assert_eq!(expected, parse_result);
     }
 }

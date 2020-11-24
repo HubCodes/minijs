@@ -1,11 +1,11 @@
 #[derive(Debug, PartialEq)]
 pub enum Expr {
     Term(Term),
-    Unop(Unop, Box<Expr>, Box<Expr>),
+    Binop(Binop, Box<Expr>, Box<Expr>),
 }
 
 #[derive(Debug, PartialEq)]
-pub enum Unop {
+pub enum Binop {
     Index,
 }
 

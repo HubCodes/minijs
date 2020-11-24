@@ -7,7 +7,7 @@ grammar(state: &mut State);
 
 pub Expr: Expr = {
     <t:Term> => Expr::Term(t),
-    <e:Expr> "[" <i:Expr> "]" => Expr::Unop(Unop::Index, Box::new(e), Box::new(i)),
+    <e:Expr> "[" <i:Expr> "]" => Expr::Binop(Binop::Index, Box::new(e), Box::new(i)),
 }
 
 pub Term: Term = {
