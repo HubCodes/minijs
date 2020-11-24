@@ -2,6 +2,7 @@
 pub enum Expr {
     Term(Term),
     Binop(Binop, Box<Expr>, Box<Expr>),
+    Call(Box<Expr>, Vec<Expr>),
 }
 
 #[derive(Debug, PartialEq)]

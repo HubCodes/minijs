@@ -8,6 +8,7 @@ grammar(state: &mut State);
 pub Expr: Expr = {
     <t:Term> => Expr::Term(t),
     <e:Expr> "[" <i:Expr> "]" => Expr::Binop(Binop::Index, Box::new(e), Box::new(i)),
+    FnCall,
 }
 
 pub Term: Term = {
@@ -15,6 +16,24 @@ pub Term: Term = {
     <n:Number> => Term::Num(n),
     <s:String> => Term::Str(s),
 };
+
+FnCall: Expr = {
+    <e: Expr> "(" <es: Exprs?> ")" => {
+        match es {
+            None => Expr::Call(Box::new(e), vec![]),
+            Some(es) => Expr::Call(Box::new(e), es),
+        }
+    },
+}
+
+Exprs: Vec<Expr> = {
+    <es: Exprs> "," <e: Expr> => {
+        let mut es = es;
+        es.push(e);
+        es
+    },
+    Expr => vec![<>],
+}
 
 Number: Num = {
     r"[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?" =>? i32::from_str(<>).map(Num::Int).or(

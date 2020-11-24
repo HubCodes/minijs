@@ -115,4 +115,14 @@ mod tests {
         let expected = Expr::Binop(Binop::Index, Box::new(target_symbol), Box::new(target_index));
         assert_eq!(expected, parse_result);
     }
+
+    #[test]
+    fn postfix_expr_func_call_1_arg() {
+        let mut state = State::new();
+        let parse_result = EXPR_PARSER.parse(&mut state, "a(1)").unwrap();
+        let target_symbol = Expr::Term(Term::Symbol(Symbol { id: 0, name: "a".to_string() }));
+        let target_expr = Expr::Term(Term::Num(Num::Int(1)));
+        let expected = Expr::Call(Box::new(target_symbol), vec![target_expr]);
+        assert_eq!(expected, parse_result);
+    }
 }
