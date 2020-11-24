@@ -117,6 +117,18 @@ mod tests {
     }
 
     #[test]
+    fn postfix_expr_indexing_recursive() {
+        let mut state = State::new();
+        let parse_result = EXPR_PARSER.parse(&mut state, "(a[1])[2]").unwrap();
+        let target_symbol = Expr::Term(Term::Symbol(Symbol::new(0, "a")));
+        let target_index_inner = Expr::Term(Term::Num(Num::Int(1)));
+        let target_index_outer = Expr::Term(Term::Num(Num::Int(2)));
+        let expected_inner = Expr::Binop(Binop::Index, Box::new(target_symbol), Box::new(target_index_inner));
+        let expected = Expr::Binop(Binop::Index, Box::new(expected_inner), Box::new(target_index_outer));
+        assert_eq!(expected, parse_result);
+    }
+
+    #[test]
     fn postfix_expr_func_call_1_arg() {
         let mut state = State::new();
         let parse_result = EXPR_PARSER.parse(&mut state, "a(1)").unwrap();

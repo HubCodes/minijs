@@ -9,6 +9,7 @@ pub Expr: Expr = {
     <t:Term> => Expr::Term(t),
     <e:Expr> "[" <i:Expr> "]" => Expr::Binop(Binop::Index, Box::new(e), Box::new(i)),
     FnCall,
+    "(" <e:Expr> ")" => e,
 }
 
 pub Term: Term = {
