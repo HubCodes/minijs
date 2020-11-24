@@ -129,12 +129,32 @@ mod tests {
     }
 
     #[test]
-    fn postfix_expr_func_call_1_arg() {
+    fn func_call_1_arg() {
         let mut state = State::new();
         let parse_result = EXPR_PARSER.parse(&mut state, "a(1)").unwrap();
         let target_symbol = Expr::Term(Term::Symbol(Symbol::new(0, "a")));
         let target_expr = Expr::Term(Term::Num(Num::Int(1)));
         let expected = Expr::Call(Box::new(target_symbol), vec![target_expr]);
+        assert_eq!(expected, parse_result);
+    }
+
+    #[test]
+    fn func_call_no_arg() {
+        let mut state = State::new();
+        let parse_result = EXPR_PARSER.parse(&mut state, "func()").unwrap();
+        let target_symbol = Expr::Term(Term::Symbol(Symbol::new(0, "func")));
+        let expected = Expr::Call(Box::new(target_symbol), vec![]);
+        assert_eq!(expected, parse_result);
+    }
+
+    #[test]
+    fn func_call_2_args() {
+        let mut state = State::new();
+        let parse_result = EXPR_PARSER.parse(&mut state, "add(1, 2)").unwrap();
+        let target_symbol = Expr::Term(Term::Symbol(Symbol::new(0, "add")));
+        let num1 = Expr::Term(Term::Num(Num::Int(1)));
+        let num2 = Expr::Term(Term::Num(Num::Int(2)));
+        let expected = Expr::Call(Box::new(target_symbol), vec![num1, num2]);
         assert_eq!(expected, parse_result);
     }
 }
