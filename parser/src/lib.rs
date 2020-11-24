@@ -92,7 +92,7 @@ mod tests {
     fn symbol() {
         let mut state = State::new();
         let parse_result = TERM_PARSER.parse(&mut state, "name").unwrap();
-        assert_eq!(Term::Symbol(Symbol { id: 0, name: "name".to_string() }), parse_result);
+        assert_eq!(Term::Symbol(Symbol::new(0, "name")), parse_result);
     }
 
     #[test]
@@ -100,8 +100,8 @@ mod tests {
         let mut state = State::new();
         let first_parse_result = TERM_PARSER.parse(&mut state, "name1").unwrap();
         let second_parse_result = TERM_PARSER.parse(&mut state, "name2").unwrap();
-        let first_expected = Term::Symbol(Symbol { id: 0, name: "name1".to_string() });
-        let second_expected = Term::Symbol(Symbol { id: 1, name: "name2".to_string() });
+        let first_expected = Term::Symbol(Symbol::new(0, "name1"));
+        let second_expected = Term::Symbol(Symbol::new(1, "name2"));
         assert_eq!(first_expected, first_parse_result);
         assert_eq!(second_expected, second_parse_result);
     }
@@ -110,7 +110,7 @@ mod tests {
     fn postfix_expr_indexing() {
         let mut state = State::new();
         let parse_result = EXPR_PARSER.parse(&mut state, "a[1]").unwrap();
-        let target_symbol = Expr::Term(Term::Symbol(Symbol { id: 0, name: "a".to_string() }));
+        let target_symbol = Expr::Term(Term::Symbol(Symbol::new(0, "a")));
         let target_index = Expr::Term(Term::Num(Num::Int(1)));
         let expected = Expr::Binop(Binop::Index, Box::new(target_symbol), Box::new(target_index));
         assert_eq!(expected, parse_result);
@@ -120,7 +120,7 @@ mod tests {
     fn postfix_expr_func_call_1_arg() {
         let mut state = State::new();
         let parse_result = EXPR_PARSER.parse(&mut state, "a(1)").unwrap();
-        let target_symbol = Expr::Term(Term::Symbol(Symbol { id: 0, name: "a".to_string() }));
+        let target_symbol = Expr::Term(Term::Symbol(Symbol::new(0, "a")));
         let target_expr = Expr::Term(Term::Num(Num::Int(1)));
         let expected = Expr::Call(Box::new(target_symbol), vec![target_expr]);
         assert_eq!(expected, parse_result);

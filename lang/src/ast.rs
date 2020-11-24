@@ -28,3 +28,9 @@ pub struct Symbol {
     pub id: i32,
     pub name: String,
 }
+
+impl Symbol {
+    pub fn new(id: i32, name: &str) -> Symbol {
+        Symbol { id, name: name.to_string() }
+    }
+}
