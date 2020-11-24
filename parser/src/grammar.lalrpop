@@ -1,8 +1,9 @@
+use crate::State;
 use std::str::FromStr;
 use lang::ast::*;
 use lalrpop_util::ParseError;
 
-grammar(symbol_id: &mut i32);
+grammar(state: &mut State);
 
 pub Expr: Expr = {
     <t:Term> => Expr::Term(t),
@@ -30,8 +31,6 @@ String: String = {
 
 Symbol: Symbol = {
     <s:r"[a-zA-Z_$][a-zA-Z0-9_$]*"> => {
-        let next_id = *symbol_id;
-        *symbol_id += 1;
-        Symbol { id: next_id, name: s.to_string() }
+        Symbol { id: state.next_symbol_id(), name: s.to_string() }
     },
 }
