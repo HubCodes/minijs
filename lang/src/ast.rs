@@ -19,6 +19,7 @@ pub enum Binop {
     Div,
     Mod,
     Add,
+    Sub,
 }
 
 #[derive(Debug, PartialEq)]

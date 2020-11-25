@@ -11,6 +11,7 @@ pub Expr: Expr = {
 
 AddSubExpr: Expr = {
     <e:AddSubExpr> "+" <m:MulDivModExpr> => Expr::Binop(Binop::Add, Box::new(e), Box::new(m)),
+    <e:AddSubExpr> "-" <m:MulDivModExpr> => Expr::Binop(Binop::Sub, Box::new(e), Box::new(m)),
     MulDivModExpr,
 }
 

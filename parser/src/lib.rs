@@ -216,4 +216,14 @@ mod tests {
         let expected = Expr::Binop(Binop::Add, Box::new(lhs), Box::new(rhs));
         assert_eq!(expected, parse_result);
     }
+
+    #[test]
+    fn sub() {
+        let mut state = State::new();
+        let parse_result = EXPR_PARSER.parse(&mut state, "1.05 - foo").unwrap();
+        let lhs = Expr::Term(Term::Num(Num::Double(1.05)));
+        let rhs = Expr::Term(Term::Symbol(Symbol::new(0, "foo")));
+        let expected = Expr::Binop(Binop::Sub, Box::new(lhs), Box::new(rhs));
+        assert_eq!(expected, parse_result);
+    }
 }
