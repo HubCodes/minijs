@@ -22,6 +22,10 @@ pub enum Binop {
     Sub,
     Shl,
     Shr,
+    Lt,
+    Gt,
+    Lte,
+    Gte,
 }
 
 #[derive(Debug, PartialEq)]
