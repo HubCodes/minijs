@@ -20,7 +20,7 @@ pub Term: Term = {
 };
 
 FnCall: Expr = {
-    <e: Expr> "(" <es: Exprs?> ")" => {
+    <e:Expr> "(" <es:Exprs?> ")" => {
         match es {
             None => Expr::Call(Box::new(e), vec![]),
             Some(es) => Expr::Call(Box::new(e), es),
@@ -29,7 +29,7 @@ FnCall: Expr = {
 }
 
 Exprs: Vec<Expr> = {
-    <es: Exprs> "," <e: Expr> => {
+    <es:Exprs> "," <e:Expr> => {
         let mut es = es;
         es.push(e);
         es
