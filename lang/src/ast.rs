@@ -15,6 +15,7 @@ pub enum Unop {
 pub enum Binop {
     Index,
     Member,
+    Mul,
 }
 
 #[derive(Debug, PartialEq)]

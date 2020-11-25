@@ -6,10 +6,15 @@ use lalrpop_util::ParseError;
 grammar(state: &mut State);
 
 pub Expr: Expr = {
+    MulDivModExpr,
+}
+
+MulDivModExpr: Expr = {
+    <e:MulDivModExpr> "*" <u:UnaryExpr> => Expr::Binop(Binop::Mul, Box::new(e), Box::new(u)),
     UnaryExpr,
 }
 
-UnaryExpr: Expr ={
+UnaryExpr: Expr = {
     "typeof" <e:UnaryExpr> => Expr::Unop(Unop::Typeof, Box::new(e)),
     PostfixExpr,
 }
