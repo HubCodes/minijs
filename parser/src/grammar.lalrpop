@@ -10,7 +10,12 @@ pub Expr: Expr = {
 }
 
 XorExpr: Expr = {
-    <e:XorExpr> "^" <a:EqExpr> => Expr::Binop(Binop::Xor, Box::new(e), Box::new(a)),
+    <e:XorExpr> "^" <a:BitAndExpr> => Expr::Binop(Binop::Xor, Box::new(e), Box::new(a)),
+    BitAndExpr,
+}
+
+BitAndExpr: Expr = {
+    <e:BitAndExpr> "&" <a:EqExpr> => Expr::Binop(Binop::BitAnd, Box::new(e), Box::new(a)),
     EqExpr,
 }
 

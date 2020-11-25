@@ -28,6 +28,7 @@ pub enum Binop {
     Gte,
     Eq,
     Neq,
+    BitAnd,
     Xor,
 }
 

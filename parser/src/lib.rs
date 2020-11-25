@@ -308,7 +308,17 @@ mod tests {
     }
 
     #[test]
-    fn xor() {
+    fn bitwise_and() {
+        let mut state = State::new();
+        let parse_result = EXPR_PARSER.parse(&mut state, "foo & bar").unwrap();
+        let lhs = Expr::Term(Term::Symbol(Symbol::new(0, "foo")));
+        let rhs = Expr::Term(Term::Symbol(Symbol::new(1, "bar")));
+        let expected = Expr::Binop(Binop::BitAnd, Box::new(lhs), Box::new(rhs));
+        assert_eq!(expected, parse_result);
+    }
+
+    #[test]
+    fn bitwise_xor() {
         let mut state = State::new();
         let parse_result = EXPR_PARSER.parse(&mut state, "foo ^ bar").unwrap();
         let lhs = Expr::Term(Term::Symbol(Symbol::new(0, "foo")));
