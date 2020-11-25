@@ -26,6 +26,8 @@ pub enum Binop {
     Gt,
     Lte,
     Gte,
+    Eq,
+    Neq,
 }
 
 #[derive(Debug, PartialEq)]

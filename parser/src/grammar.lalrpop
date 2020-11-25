@@ -6,6 +6,12 @@ use lalrpop_util::ParseError;
 grammar(state: &mut State);
 
 pub Expr: Expr = {
+    EqExpr,
+}
+
+EqExpr: Expr = {
+    <e:EqExpr> "==" <a:RelationExpr> => Expr::Binop(Binop::Eq, Box::new(e), Box::new(a)),
+    <e:EqExpr> "!=" <a:RelationExpr> => Expr::Binop(Binop::Neq, Box::new(e), Box::new(a)),
     RelationExpr,
 }
 
