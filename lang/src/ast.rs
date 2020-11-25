@@ -1,3 +1,5 @@
+use std::collections::HashMap;
+
 #[derive(Debug, PartialEq)]
 pub enum Stmt {
     Expr(Expr),
@@ -44,6 +46,7 @@ pub enum Binop {
 
 #[derive(Debug, PartialEq)]
 pub enum Term {
+    Obj(Obj),
     Num(Num),
     Str(String),
     Symbol(Symbol),
@@ -56,6 +59,11 @@ pub enum Num {
 }
 
 #[derive(Debug, PartialEq)]
+pub struct Obj {
+    pub kv: HashMap<String, Expr>,
+}
+
+#[derive(Debug, PartialEq)]
 pub struct Symbol {
     pub id: i32,
     pub name: String,
@@ -64,5 +72,11 @@ pub struct Symbol {
 impl Symbol {
     pub fn new(id: i32, name: &str) -> Symbol {
         Symbol { id, name: name.to_string() }
+    }
+}
+
+impl Obj {
+    pub fn empty() -> Obj {
+        Obj { kv: HashMap::new() }
     }
 }

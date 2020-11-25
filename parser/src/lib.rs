@@ -19,6 +19,7 @@ mod tests {
     use super::state::State;
     use super::grammar;
     use lang::ast::*;
+    use std::collections::HashMap;
 
     lazy_static! {
         static ref TERM_PARSER: grammar::TermParser = grammar::TermParser::new();
@@ -379,6 +380,35 @@ mod tests {
         let symbol = Symbol::new(0, "foo");
         let init_expr = Expr::Term(Term::Symbol(Symbol::new(1, "bar")));
         let expected = Stmt::VarDef(symbol, Some(init_expr));
-        assert_eq!(parse_result, expected);
+        assert_eq!(expected, parse_result);
+    }
+
+    #[test]
+    fn empty_object_literal() {
+        let mut state = State::new();
+        let parse_result = EXPR_PARSER.parse(&mut state, "{}").unwrap();
+        let expected = Expr::Term(Term::Obj(Obj::empty()));
+        assert_eq!(expected, parse_result);
+    }
+
+    #[test]
+    fn one_key_value_object_literal() {
+        let mut state = State::new();
+        let parse_result = EXPR_PARSER.parse(&mut state, "{a:1}").unwrap();
+        let mut kv_map: HashMap<String, Expr> = HashMap::new();
+        kv_map.insert("a".to_string(), Expr::Term(Term::Num(Num::Int(1))));
+        let expected = Expr::Term(Term::Obj(Obj { kv: kv_map }));
+        assert_eq!(expected, parse_result);
+    }
+
+    #[test]
+    fn two_keys_object_literal() {
+        let mut state = State::new();
+        let parse_result = EXPR_PARSER.parse(&mut state, r#"{a:1,"b":2}"#).unwrap();
+        let mut kv_map: HashMap<String, Expr> = HashMap::new();
+        kv_map.insert("a".to_string(), Expr::Term(Term::Num(Num::Int(1))));
+        kv_map.insert("b".to_string(), Expr::Term(Term::Num(Num::Int(2))));
+        let expected = Expr::Term(Term::Obj(Obj { kv: kv_map }));
+        assert_eq!(expected, parse_result);
     }
 }

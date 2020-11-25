@@ -1,4 +1,5 @@
 use crate::State;
+use std::collections::HashMap;
 use std::str::FromStr;
 use lang::ast::*;
 use lalrpop_util::ParseError;
@@ -104,10 +105,44 @@ PostfixExpr: Expr = {
 }
 
 pub Term: Term = {
+    <o:Obj> => Term::Obj(o),
     <s:Symbol> => Term::Symbol(s),
     <n:Number> => Term::Num(n),
     <s:String> => Term::Str(s),
 };
+
+Obj: Obj = {
+    "{" <kv_map:KeyValueList?> "}" => {
+        match kv_map {
+            Some(kv_map) => Obj { kv: kv_map },
+            None => Obj { kv: HashMap::new() },
+        }
+    }
+}
+
+KeyValueList: HashMap<String, Expr> = {
+    <kv_map:KeyValueList> "," <key:ObjKey> ":" <value:Expr> => {
+        let mut kv_map = kv_map;
+        kv_map.insert(key, value);
+        kv_map
+    },
+    <key:ObjKey> ":" <value:Expr> => {
+        let mut kv_map = HashMap::new();
+        kv_map.insert(key, value);
+        kv_map
+    },
+}
+
+ObjKey: String = {
+    <n:Number> => {
+        match n {
+            Num::Int(i) => i.to_string(),
+            Num::Double(d) => d.to_string(),
+        }
+    },
+    <s:Symbol> => s.name,
+    <s:String> => s,
+}
 
 FnCall: Expr = {
     <e:PostfixExpr> "(" <es:Exprs?> ")" => {
