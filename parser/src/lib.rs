@@ -157,4 +157,14 @@ mod tests {
         let expected = Expr::Call(Box::new(target_symbol), vec![num1, num2]);
         assert_eq!(expected, parse_result);
     }
+
+    #[test]
+    fn member_access() {
+        let mut state = State::new();
+        let parse_result = EXPR_PARSER.parse(&mut state, "foo.bar").unwrap();
+        let target_symbol_left = Expr::Term(Term::Symbol(Symbol::new(0, "foo")));
+        let target_symbol_right = Expr::Term(Term::Symbol(Symbol::new(1, "bar")));
+        let expected = Expr::Binop(Binop::Member, Box::new(target_symbol_left), Box::new(target_symbol_right));
+        assert_eq!(expected, parse_result);
+    }
 }

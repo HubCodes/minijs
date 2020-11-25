@@ -10,6 +10,7 @@ pub Expr: Expr = {
     <e:Expr> "[" <i:Expr> "]" => Expr::Binop(Binop::Index, Box::new(e), Box::new(i)),
     FnCall,
     "(" <e:Expr> ")" => e,
+    <e:Expr> "." <s:Symbol> => Expr::Binop(Binop::Member, Box::new(e), Box::new(Expr::Term(Term::Symbol(s)))),
 }
 
 pub Term: Term = {

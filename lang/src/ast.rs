@@ -8,6 +8,7 @@ pub enum Expr {
 #[derive(Debug, PartialEq)]
 pub enum Binop {
     Index,
+    Member,
 }
 
 #[derive(Debug, PartialEq)]
