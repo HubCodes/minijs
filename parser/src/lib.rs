@@ -196,4 +196,14 @@ mod tests {
         let expected = Expr::Binop(Binop::Div, Box::new(lhs), Box::new(rhs));
         assert_eq!(expected, parse_result);
     }
+
+    #[test]
+    fn remainder() {
+        let mut state = State::new();
+        let parse_result = EXPR_PARSER.parse(&mut state, "bar % 3").unwrap();
+        let lhs = Expr::Term(Term::Symbol(Symbol::new(0, "bar")));
+        let rhs = Expr::Term(Term::Num(Num::Int(3)));
+        let expected = Expr::Binop(Binop::Mod, Box::new(lhs), Box::new(rhs));
+        assert_eq!(expected, parse_result);
+    }
 }

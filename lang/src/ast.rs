@@ -17,6 +17,7 @@ pub enum Binop {
     Member,
     Mul,
     Div,
+    Mod,
 }
 
 #[derive(Debug, PartialEq)]

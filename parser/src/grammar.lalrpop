@@ -12,6 +12,7 @@ pub Expr: Expr = {
 MulDivModExpr: Expr = {
     <e:MulDivModExpr> "*" <u:UnaryExpr> => Expr::Binop(Binop::Mul, Box::new(e), Box::new(u)),
     <e:MulDivModExpr> "/" <u:UnaryExpr> => Expr::Binop(Binop::Div, Box::new(e), Box::new(u)),
+    <e:MulDivModExpr> "%" <u:UnaryExpr> => Expr::Binop(Binop::Mod, Box::new(e), Box::new(u)),
     UnaryExpr,
 }
 
