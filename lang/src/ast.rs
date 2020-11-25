@@ -30,6 +30,7 @@ pub enum Binop {
     Neq,
     BitAnd,
     Xor,
+    BitOr,
 }
 
 #[derive(Debug, PartialEq)]
