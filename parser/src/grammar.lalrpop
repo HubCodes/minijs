@@ -5,6 +5,24 @@ use lalrpop_util::ParseError;
 
 grammar(state: &mut State);
 
+pub Stmt: Stmt = {
+    VarDef,
+    <e:Expr> ";" => Stmt::Expr(e),
+}
+
+VarDef: Stmt = {
+    "let" <name:Symbol> <e:VarDefInit?> ";" => {
+        match e {
+            Some(e) => Stmt::VarDef(name, Some(e)),
+            None => Stmt::VarDef(name, None),
+        }
+    },
+}
+
+VarDefInit: Expr = {
+    "=" <e:Expr> => e,
+}
+
 pub Expr: Expr = {
     AssignExpr,
 }

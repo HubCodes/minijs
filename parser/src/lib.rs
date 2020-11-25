@@ -23,6 +23,7 @@ mod tests {
     lazy_static! {
         static ref TERM_PARSER: grammar::TermParser = grammar::TermParser::new();
         static ref EXPR_PARSER: grammar::ExprParser = grammar::ExprParser::new();
+        static ref STMT_PARSER: grammar::StmtParser = grammar::StmtParser::new();
     }
 
     #[test]
@@ -369,5 +370,15 @@ mod tests {
         );
         let expected = Expr::Binop(Binop::Assign, Box::new(lhs), Box::new(rhs));
         assert_eq!(expected, parse_result);
+    }
+
+    #[test]
+    fn variable_define() {
+        let mut state = State::new();
+        let parse_result = STMT_PARSER.parse(&mut state, "let foo = bar;").unwrap();
+        let symbol = Symbol::new(0, "foo");
+        let init_expr = Expr::Term(Term::Symbol(Symbol::new(1, "bar")));
+        let expected = Stmt::VarDef(symbol, Some(init_expr));
+        assert_eq!(parse_result, expected);
     }
 }
