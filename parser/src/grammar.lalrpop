@@ -6,6 +6,11 @@ use lalrpop_util::ParseError;
 grammar(state: &mut State);
 
 pub Expr: Expr = {
+    AndExpr,
+}
+
+AndExpr: Expr = {
+    <e:AndExpr> "&&" <a:BitOrExpr> => Expr::Binop(Binop::And, Box::new(e), Box::new(a)),
     BitOrExpr,
 }
 
