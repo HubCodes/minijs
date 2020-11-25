@@ -167,4 +167,13 @@ mod tests {
         let expected = Expr::Binop(Binop::Member, Box::new(target_symbol_left), Box::new(target_symbol_right));
         assert_eq!(expected, parse_result);
     }
+
+    #[test]
+    fn typeof_expr() {
+        let mut state = State::new();
+        let parse_result = EXPR_PARSER.parse(&mut state, "typeof foo").unwrap();
+        let target_expr = Expr::Term(Term::Symbol(Symbol::new(0, "foo")));
+        let expected = Expr::Unop(Unop::Typeof, Box::new(target_expr));
+        assert_eq!(expected, parse_result);
+    }
 }

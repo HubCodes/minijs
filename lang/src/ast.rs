@@ -2,7 +2,13 @@
 pub enum Expr {
     Term(Term),
     Binop(Binop, Box<Expr>, Box<Expr>),
+    Unop(Unop, Box<Expr>),
     Call(Box<Expr>, Vec<Expr>),
+}
+
+#[derive(Debug, PartialEq)]
+pub enum Unop {
+    Typeof,
 }
 
 #[derive(Debug, PartialEq)]

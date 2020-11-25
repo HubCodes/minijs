@@ -6,11 +6,20 @@ use lalrpop_util::ParseError;
 grammar(state: &mut State);
 
 pub Expr: Expr = {
+    UnaryExpr,
+}
+
+UnaryExpr: Expr ={
+    "typeof" <e:UnaryExpr> => Expr::Unop(Unop::Typeof, Box::new(e)),
+    PostfixExpr,
+}
+
+PostfixExpr: Expr = {
     <t:Term> => Expr::Term(t),
-    <e:Expr> "[" <i:Expr> "]" => Expr::Binop(Binop::Index, Box::new(e), Box::new(i)),
+    <e:PostfixExpr> "[" <i:Expr> "]" => Expr::Binop(Binop::Index, Box::new(e), Box::new(i)),
     FnCall,
     "(" <e:Expr> ")" => e,
-    <e:Expr> "." <s:Symbol> => Expr::Binop(Binop::Member, Box::new(e), Box::new(Expr::Term(Term::Symbol(s)))),
+    <e:PostfixExpr> "." <s:Symbol> => Expr::Binop(Binop::Member, Box::new(e), Box::new(Expr::Term(Term::Symbol(s)))),
 }
 
 pub Term: Term = {
@@ -20,7 +29,7 @@ pub Term: Term = {
 };
 
 FnCall: Expr = {
-    <e:Expr> "(" <es:Exprs?> ")" => {
+    <e:PostfixExpr> "(" <es:Exprs?> ")" => {
         match es {
             None => Expr::Call(Box::new(e), vec![]),
             Some(es) => Expr::Call(Box::new(e), es),
