@@ -419,4 +419,28 @@ mod tests {
         let expected = Stmt::Expr(Expr::Term(Term::Num(Num::Int(1))));
         assert_eq!(expected, parse_result);
     }
+
+    #[test]
+    fn if_stmt() {
+        let mut state = State::new();
+        let parse_result = STMT_PARSER.parse(&mut state, "if(1){2;}").unwrap();
+        let expected = Stmt::If(
+            Expr::Term(Term::Num(Num::Int(1))),
+            Box::new(Stmt::Block(vec![Stmt::Expr(Expr::Term(Term::Num(Num::Int(2))))])),
+            None
+        );
+        assert_eq!(expected, parse_result);
+    }
+
+    #[test]
+    fn if_block_empty() {
+        let mut state = State::new();
+        let parse_result = STMT_PARSER.parse(&mut state, "if(1){}").unwrap();
+        let expected = Stmt::If(
+            Expr::Term(Term::Num(Num::Int(1))),
+            Box::new(Stmt::Block(vec![])),
+            None
+        );
+        assert_eq!(expected, parse_result);
+    }
 }

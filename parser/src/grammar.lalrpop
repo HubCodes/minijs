@@ -8,6 +8,7 @@ grammar(state: &mut State);
 
 pub Stmt: Stmt = {
     VarDef,
+    If,
     <e:Expr> ";" => Stmt::Expr(e),
 }
 
@@ -18,6 +19,24 @@ VarDef: Stmt = {
             None => Stmt::VarDef(name, None),
         }
     },
+}
+
+If: Stmt = {
+    "if" "(" <c:Expr> ")" "{" <ss:StmtList?> "}" => {
+        match ss {
+            Some(ss) => Stmt::If(c, Box::new(Stmt::Block(ss)), None),
+            None => Stmt::If(c, Box::new(Stmt::Block(vec![])), None),
+        }
+    },
+}
+
+StmtList: Vec<Stmt> = {
+    <ss:StmtList> <s:Stmt> => {
+        let mut ss = ss;
+        ss.push(s);
+        ss
+    },
+    <s:Stmt> => vec![s]
 }
 
 VarDefInit: Expr = {
