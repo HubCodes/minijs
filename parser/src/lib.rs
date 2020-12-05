@@ -443,4 +443,15 @@ mod tests {
         );
         assert_eq!(expected, parse_result);
     }
+
+    #[test]
+    fn lambda_expr() {
+        let mut state = State::new();
+        let parse_result = EXPR_PARSER.parse(&mut state, "function(a){1;}").unwrap();
+        let expected = Expr::Lambda(
+            vec![Expr::Term(Term::Symbol(Symbol::new(0, "a")))],
+            Box::new(Stmt::Block(vec![Stmt::Expr(Expr::Term(Term::Num(Num::Int(1))))]))
+        );
+        assert_eq!(expected, parse_result);
+    }
 }

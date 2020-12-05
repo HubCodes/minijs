@@ -45,6 +45,18 @@ VarDefInit: Expr = {
 
 pub Expr: Expr = {
     AssignExpr,
+    Lambda,
+}
+
+Lambda: Expr = {
+    "function" "(" <es:Exprs?> ")" "{" <ss:StmtList?> "}" => {
+        match (es, ss) {
+            (Some(es), Some(ss)) => Expr::Lambda(es, Box::new(Stmt::Block(ss))),
+            (None, Some(ss)) => Expr::Lambda(vec![], Box::new(Stmt::Block(ss))),
+            (Some(es), None) => Expr::Lambda(es, Box::new(Stmt::Block(vec![]))),
+            (None, None) => Expr::Lambda(vec![], Box::new(Stmt::Block(vec![]))),
+        }
+    }
 }
 
 AssignExpr: Expr = {

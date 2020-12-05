@@ -14,6 +14,7 @@ pub enum Expr {
     Binop(Binop, Box<Expr>, Box<Expr>),
     Unop(Unop, Box<Expr>),
     Call(Box<Expr>, Vec<Expr>),
+    Lambda(Vec<Expr>, Box<Stmt>),
 }
 
 #[derive(Debug, PartialEq)]
