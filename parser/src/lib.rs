@@ -411,4 +411,12 @@ mod tests {
         let expected = Expr::Term(Term::Obj(Obj { kv: kv_map }));
         assert_eq!(expected, parse_result);
     }
+
+    #[test]
+    fn normal_stmt() {
+        let mut state = State::new();
+        let parse_result = STMT_PARSER.parse(&mut state, "1;").unwrap();
+        let expected = Stmt::Expr(Expr::Term(Term::Num(Num::Int(1))));
+        assert_eq!(expected, parse_result);
+    }
 }
