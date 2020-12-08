@@ -19,9 +19,15 @@ impl SymbolTable {
         SymbolTable { scope: Rc::new(Scope::Root) }
     }
 
-    fn enter_scope(&mut self) -> SymbolTable {
+    fn enter_block(&self) -> SymbolTable {
         SymbolTable {
             scope: Rc::new(Scope::Block { parent: Rc::clone(&self.scope), items: vec![] })
+        }
+    }
+
+    fn enter_function(&self) -> SymbolTable {
+        SymbolTable {
+            scope: Rc::new(Scope::Function { parent: Rc::clone(&self.scope), args: vec![] })
         }
     }
 }
