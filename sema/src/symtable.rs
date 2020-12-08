@@ -1,5 +1,8 @@
+use core::mem;
+
 use lang::ast::Symbol;
 
+#[derive(Default)]
 pub enum Scope {
     Root,
     Block { parent: Box<Scope>, items: Vec<Symbol> },
@@ -16,16 +19,18 @@ impl SymbolTable {
     }
 
     fn enter_scope(&mut self) {
-        let before_scope = *self.scope;
-        self.scope = Box::new(Scope::Block { parent: Box::new(before_scope), items: vec![] });
+        self.scope = Box::new(Scope::Block { parent: Box::new(*self.scope), items: vec![] });
     }
 
     fn exit_scope(&mut self) {
-        let scope = *self.scope;
-        match scope {
+        match *self.scope {
             Scope::Root => (),
-            Scope::Block { parent, .. } => self.scope = parent,
-            Scope::Function { parent, .. } => self.scope = parent,
+            Scope::Block { parent, .. } => {
+                mem::replace(&mut self.scope, parent);
+            },
+            Scope::Function { parent, .. } => {
+                mem::replace(&mut self.scope, parent);
+            },
         }
     }
 }
