@@ -4,6 +4,7 @@ use std::rc::Rc;
 
 use lang::ast::Symbol;
 
+#[derive(PartialEq, Eq, Hash)]
 pub struct ScopeKey(String);
 
 pub enum Scope {
@@ -14,7 +15,7 @@ pub enum Scope {
 
 pub struct SymbolTable {
     scope: Rc<RefCell<Scope>>,
-    table: HashMap<ScopeKey, Rc<RefCell<Scope>>>,
+    table: HashMap<Rc<ScopeKey>, Rc<RefCell<Scope>>>,
 }
 
 impl SymbolTable {
@@ -36,33 +37,35 @@ impl SymbolTable {
         );
     }
 
-    fn lookup(&self, symbol: &Symbol, scope_key: &ScopeKey) -> Option<Rc<RefCell<Scope>>> {
+    fn lookup(&self, symbol: &Symbol, scope_key: &ScopeKey) -> Option<Rc<Symbol>> {
         let scope = self.table.get(scope_key);
         if let Some(scope) = scope {
             match &*(**scope).borrow() {
                 Scope::Root => None,
                 Scope::Function { args: items, .. } |
                 Scope::Block { items, .. } => {
-                    if let Some(_) = items.into_iter().find(|item| *item.name == symbol.name) {
-                        Some(Rc::clone(scope))
+                    if let Some(symbol) = items.into_iter().find(|item| *item.name == symbol.name) {
+                        Some(Rc::clone(symbol))
+                    } else {
+                        self.lookup(symbol, scope_key)
                     }
-                    self.lookup(symbol, scope_key)
                 },
             }
+        } else {
+            None
         }
-        None
     }
 
-    fn add_def(&mut self, symbol: Symbol) -> Box<ScopeKey> {
+    fn add_def(&mut self, symbol: Symbol) -> Rc<ScopeKey> {
         let key = symbol.clone();
-        let scope_key = Box::new(ScopeKey(key.name));
-        self.table.insert(*scope_key, Rc::clone(&self.scope));
+        let scope_key = Rc::new(ScopeKey(key.name));
+        self.table.insert(Rc::clone(&scope_key), Rc::clone(&self.scope));
         match &mut *(*self.scope).borrow_mut() {
             Scope::Root => panic!("Cannot add definition into Scope::Root"),
             Scope::Block { ref mut items, .. } |
             Scope::Function { args: ref mut items, .. } => {
                 items.push(Rc::new(symbol));
-                scope_key
+                Rc::clone(&scope_key)
             },
         }
     }
