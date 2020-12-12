@@ -6,7 +6,7 @@ use lang::ast::Symbol;
 
 pub struct ScopeKey(String);
 
-pub enum ScopeKind {
+pub enum Scope {
     Root,
     Block { parent: Rc<RefCell<Scope>>, items: Vec<Rc<Symbol>> },
     Function { parent: Rc<RefCell<Scope>>, args: Vec<Rc<Symbol>> },
@@ -19,7 +19,9 @@ pub struct SymbolTable {
 
 impl SymbolTable {
     fn new() -> SymbolTable {
-        SymbolTable { scope: Rc::new(RefCell::new(Scope::Root)), table: HashMap::new() }
+        SymbolTable {
+            scope: Rc::new(RefCell::new(Scope::Root)), table: HashMap::new()
+        }
     }
 
     fn enter_block(&mut self) {
@@ -34,21 +36,33 @@ impl SymbolTable {
         );
     }
 
-    fn lookup(&self, symbol: &Symbol, scopeKey: &ScopeKey) -> Option<Scope> {
-        let scope = self.table.get(scopeKey);
+    fn lookup(&self, symbol: &Symbol, scope_key: &ScopeKey) -> Option<Rc<RefCell<Scope>>> {
+        let scope = self.table.get(scope_key);
         if let Some(scope) = scope {
-            // recursion
+            match &*(**scope).borrow() {
+                Scope::Root => None,
+                Scope::Function { args: items, .. } |
+                Scope::Block { items, .. } => {
+                    if let Some(_) = items.into_iter().find(|item| *item.name == symbol.name) {
+                        Some(Rc::clone(scope))
+                    }
+                    self.lookup(symbol, scope_key)
+                },
+            }
         }
+        None
     }
 
     fn add_def(&mut self, symbol: Symbol) -> Box<ScopeKey> {
         let key = symbol.clone();
-        self.table.insert(key, Rc::clone(&self.scope));
+        let scope_key = Box::new(ScopeKey(key.name));
+        self.table.insert(*scope_key, Rc::clone(&self.scope));
         match &mut *(*self.scope).borrow_mut() {
-            Scope::Root => (),
+            Scope::Root => panic!("Cannot add definition into Scope::Root"),
             Scope::Block { ref mut items, .. } |
             Scope::Function { args: ref mut items, .. } => {
                 items.push(Rc::new(symbol));
+                scope_key
             },
         }
     }
