@@ -66,7 +66,7 @@ pub struct Obj {
     pub kv: HashMap<String, Expr>,
 }
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Eq, Hash, Clone)]
 pub struct Symbol {
     pub id: i32,
     pub name: String,
