@@ -9,9 +9,9 @@ use lalrpop_util::{ParseError, lexer};
 
 lalrpop_mod!(grammar);
 
-pub fn parse(code: &str) -> Result<Expr, ParseError<usize, lexer::Token, &str>> {
+pub fn parse(code: &str) -> Result<Program, ParseError<usize, lexer::Token, &str>> {
     let mut state = State::new();
-    grammar::ExprParser::new().parse(&mut state, code)
+    grammar::StmtParser::new().parse(&mut state, code).map(|stmt| Program(stmt))
 }
 
 #[cfg(test)]

@@ -324,6 +324,7 @@ name = "minijs-rust"
 version = "0.1.0"
 dependencies = [
  "parser",
+ "sema",
 ]
 
 [[package]]
@@ -437,6 +438,13 @@ dependencies = [
  "blake2b_simd",
  "constant_time_eq",
  "crossbeam-utils",
+]
+
+[[package]]
+name = "sema"
+version = "0.1.0"
+dependencies = [
+ "lang",
 ]
 
 [[package]]
