@@ -1,5 +1,7 @@
 use std::collections::HashMap;
 
+pub struct Program(pub Stmt);
+
 #[derive(Debug, PartialEq)]
 pub enum Stmt {
     Expr(Expr),

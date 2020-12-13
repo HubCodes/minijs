@@ -4,47 +4,58 @@ use std::rc::Rc;
 
 use lang::ast::Symbol;
 
-#[derive(PartialEq, Eq, Hash)]
+#[derive(Debug, PartialEq, Eq, Hash)]
 pub struct ScopeKey(String);
 
+#[derive(Debug)]
 pub enum Scope {
     Root,
     Block { parent: Rc<RefCell<Scope>>, items: Vec<Rc<Symbol>> },
     Function { parent: Rc<RefCell<Scope>>, args: Vec<Rc<Symbol>> },
 }
 
+#[derive(Debug)]
 pub struct SymbolTable {
     scope: Rc<RefCell<Scope>>,
     table: HashMap<Rc<ScopeKey>, Rc<RefCell<Scope>>>,
 }
 
 impl SymbolTable {
-    fn new() -> SymbolTable {
+    pub fn new() -> SymbolTable {
         SymbolTable {
             scope: Rc::new(RefCell::new(Scope::Root)), table: HashMap::new()
         }
     }
 
-    fn enter_block(&mut self) {
+    pub fn enter_block(&mut self) {
         self.scope = Rc::new(
             RefCell::new(Scope::Block { parent: Rc::clone(&self.scope), items: vec![] })
         );
     }
 
-    fn enter_function(&mut self) {
+    pub fn enter_function(&mut self) {
         self.scope = Rc::new(
             RefCell::new(Scope::Function { parent: Rc::clone(&self.scope), args: vec![] })
         );
     }
 
-    fn lookup(&self, symbol: &Symbol, scope_key: &ScopeKey) -> Option<Rc<Symbol>> {
+    pub fn leave(&mut self) {
+        let parent_scope = match &mut *(*self.scope).borrow_mut() {
+            Scope::Root => panic!("Cannot leave from Scope::Root"),
+            Scope::Block { parent, .. } |
+            Scope::Function { parent, .. } => Rc::clone(parent),
+        };
+        self.scope = parent_scope;
+    }
+
+    pub fn lookup(&self, name: &String, scope_key: &ScopeKey) -> Option<Rc<Symbol>> {
         let scope = self.table.get(scope_key);
         if let Some(scope) = scope {
             match &*(**scope).borrow() {
                 Scope::Root => None,
                 Scope::Function { args: items, .. } |
                 Scope::Block { items, .. } => {
-                    if let Some(symbol) = items.into_iter().find(|item| *item.name == symbol.name) {
+                    if let Some(symbol) = items.into_iter().find(|item| *item.name == name) {
                         Some(Rc::clone(symbol))
                     } else {
                         self.lookup(symbol, scope_key)
@@ -56,7 +67,7 @@ impl SymbolTable {
         }
     }
 
-    fn add_def(&mut self, symbol: Symbol) -> Rc<ScopeKey> {
+    pub fn add_def(&mut self, symbol: &Symbol) -> Rc<ScopeKey> {
         let key = symbol.clone();
         let scope_key = Rc::new(ScopeKey(key.name));
         self.table.insert(Rc::clone(&scope_key), Rc::clone(&self.scope));
@@ -64,7 +75,7 @@ impl SymbolTable {
             Scope::Root => panic!("Cannot add definition into Scope::Root"),
             Scope::Block { ref mut items, .. } |
             Scope::Function { args: ref mut items, .. } => {
-                items.push(Rc::new(symbol));
+                items.push(Rc::new(symbol.clone()));
                 Rc::clone(&scope_key)
             },
         }
