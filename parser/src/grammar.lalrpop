@@ -3,6 +3,7 @@ use std::collections::HashMap;
 use std::str::FromStr;
 use lang::ast::*;
 use lalrpop_util::ParseError;
+use std::rc::Rc;
 
 grammar(state: &mut State);
 
@@ -23,9 +24,10 @@ VarDef: Stmt = {
 
 If: Stmt = {
     "if" "(" <c:Expr> ")" "{" <ss:StmtList?> "}" => {
+        let block_scope = Rc::new(ScopeKey::new(state.next_scope_id()));
         match ss {
-            Some(ss) => Stmt::If(c, Box::new(Stmt::Block(ss)), None),
-            None => Stmt::If(c, Box::new(Stmt::Block(vec![])), None),
+            Some(ss) => Stmt::If(c, Box::new(Stmt::Block(ss, block_scope)), None),
+            None => Stmt::If(c, Box::new(Stmt::Block(vec![], block_scope)), None),
         }
     },
 }
@@ -50,11 +52,33 @@ pub Expr: Expr = {
 
 Lambda: Expr = {
     "function" "(" <es:Exprs?> ")" "{" <ss:StmtList?> "}" => {
+        let lambda_scope = Rc::new(ScopeKey::new(state.next_scope_id()));
+        let block_scope = Rc::new(ScopeKey::new(state.next_scope_id()));
         match (es, ss) {
-            (Some(es), Some(ss)) => Expr::Lambda(es, Box::new(Stmt::Block(ss))),
-            (None, Some(ss)) => Expr::Lambda(vec![], Box::new(Stmt::Block(ss))),
-            (Some(es), None) => Expr::Lambda(es, Box::new(Stmt::Block(vec![]))),
-            (None, None) => Expr::Lambda(vec![], Box::new(Stmt::Block(vec![]))),
+            (Some(es), Some(ss)) =>
+                Expr::Lambda(
+                    es,
+                    Box::new(Stmt::Block(ss, block_scope)),
+                    lambda_scope
+                ),
+            (None, Some(ss)) =>
+                Expr::Lambda(
+                    vec![],
+                    Box::new(Stmt::Block(ss, block_scope)),
+                    lambda_scope
+                ),
+            (Some(es), None) =>
+                Expr::Lambda(
+                    es,
+                    Box::new(Stmt::Block(vec![], block_scope)),
+                    lambda_scope
+                ),
+            (None, None) =>
+                Expr::Lambda(
+                    vec![],
+                    Box::new(Stmt::Block(vec![], block_scope)),
+                    lambda_scope
+                ),
         }
     }
 }

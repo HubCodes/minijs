@@ -6,12 +6,14 @@ mod state;
 use state::State;
 use lang::ast::*;
 use lalrpop_util::{ParseError, lexer};
+use std::rc::Rc;
 
 lalrpop_mod!(grammar);
 
 pub fn parse(code: &str) -> Result<Program, ParseError<usize, lexer::Token, &str>> {
     let mut state = State::new();
-    grammar::StmtParser::new().parse(&mut state, code).map(|stmt| Program(stmt))
+    let scope_key = Rc::new(ScopeKey(state.next_scope_id()));
+    grammar::StmtParser::new().parse(&mut state, code).map(|stmt| Program { stmt, scope_key })
 }
 
 #[cfg(test)]

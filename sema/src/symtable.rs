@@ -2,10 +2,7 @@ use std::cell::RefCell;
 use std::collections::HashMap;
 use std::rc::Rc;
 
-use lang::ast::Symbol;
-
-#[derive(Debug, Clone, PartialEq, Eq, Hash)]
-pub struct ScopeKey(String);
+use lang::ast::{Symbol, ScopeKey};
 
 #[derive(Debug)]
 pub enum Scope {
@@ -27,16 +24,20 @@ impl SymbolTable {
         }
     }
 
-    pub fn enter_block(&mut self) {
-        self.scope = Rc::new(
+    pub fn enter_block(&mut self, scope_key: Rc<ScopeKey>) {
+        let scope = Rc::new(
             RefCell::new(Scope::Block { parent: Rc::clone(&self.scope), items: vec![] })
         );
+        self.scope = Rc::clone(&scope);
+        self.table.insert(scope_key, scope);
     }
 
-    pub fn enter_function(&mut self) {
-        self.scope = Rc::new(
+    pub fn enter_function(&mut self, scope_key: Rc<ScopeKey>) {
+        let scope = Rc::new(
             RefCell::new(Scope::Function { parent: Rc::clone(&self.scope), args: vec![] })
         );
+        self.scope = Rc::clone(&scope);
+        self.table.insert(scope_key, scope);
     }
 
     pub fn leave(&mut self) {
@@ -67,15 +68,17 @@ impl SymbolTable {
         }
     }
 
-    pub fn add_def(&mut self, scope_key: &ScopeKey, symbol: &Symbol) {
-        let scope_key = (*scope_key).clone();
-        self.table.insert(Rc::new(scope_key), Rc::clone(&self.scope));
-        match &mut *(*self.scope).borrow_mut() {
-            Scope::Root => panic!("Cannot add definition into Scope::Root"),
-            Scope::Block { ref mut items, .. } |
-            Scope::Function { args: ref mut items, .. } => {
-                items.push(Rc::new(symbol.clone()));
-            },
+    pub fn add_def(&mut self, symbol: &Symbol, scope_key: Rc<ScopeKey>) {
+        if let Some(scope) = self.table.get(&*scope_key) {
+            match &mut *(*scope).borrow_mut() {
+                Scope::Root => panic!("Cannot add definition into Scope::Root"),
+                Scope::Block { ref mut items, .. } |
+                Scope::Function { args: ref mut items, .. } => {
+                    items.push(Rc::new(symbol.clone()));
+                },
+            }
+        } else {
+            panic!("Cannot find scope {}", scope_key.0);
         }
     }
 }
