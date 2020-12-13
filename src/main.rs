@@ -4,7 +4,7 @@ use sema::from_ast::SymbolTableBuilder;
 fn main() {
     let code =
         "(function(a){
-            a = 1;
+            let x = 1;
         })();
         ";
     let ast = parse(code);
@@ -13,5 +13,5 @@ fn main() {
         Ok(ast) => symbol_table_builder.from_ast(&ast),
         Err(_) => panic!(":("),
     };
-    print!("{:?}", symbol_table);
+    print!("{:#?}", symbol_table);
 }

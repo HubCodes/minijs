@@ -93,7 +93,12 @@ impl SymbolTableBuilder {
     fn from_lambda(&mut self, args: &Vec<Expr>, body: &Box<Stmt>, scope_key: &Rc<ScopeKey>) {
         self.table.enter_function(Rc::clone(scope_key));
         for arg in args {
-            self.from_expr(arg, scope_key);
+            match arg {
+                Expr::Term(Term::Symbol(sym)) => {
+                    self.table.add_def(sym, Rc::clone(scope_key));
+                }
+                _ => (),
+            }
         }
         self.from_stmt(body, scope_key);
         self.table.leave();
