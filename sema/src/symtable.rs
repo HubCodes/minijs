@@ -4,7 +4,7 @@ use std::rc::Rc;
 
 use lang::ast::Symbol;
 
-#[derive(Debug, PartialEq, Eq, Hash)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub struct ScopeKey(String);
 
 #[derive(Debug)]
@@ -55,10 +55,10 @@ impl SymbolTable {
                 Scope::Root => None,
                 Scope::Function { args: items, .. } |
                 Scope::Block { items, .. } => {
-                    if let Some(symbol) = items.into_iter().find(|item| *item.name == name) {
+                    if let Some(symbol) = items.into_iter().find(|item| *item.name == *name) {
                         Some(Rc::clone(symbol))
                     } else {
-                        self.lookup(symbol, scope_key)
+                        self.lookup(name, scope_key)
                     }
                 },
             }
@@ -67,16 +67,14 @@ impl SymbolTable {
         }
     }
 
-    pub fn add_def(&mut self, symbol: &Symbol) -> Rc<ScopeKey> {
-        let key = symbol.clone();
-        let scope_key = Rc::new(ScopeKey(key.name));
-        self.table.insert(Rc::clone(&scope_key), Rc::clone(&self.scope));
+    pub fn add_def(&mut self, scope_key: &ScopeKey, symbol: &Symbol) {
+        let scope_key = (*scope_key).clone();
+        self.table.insert(Rc::new(scope_key), Rc::clone(&self.scope));
         match &mut *(*self.scope).borrow_mut() {
             Scope::Root => panic!("Cannot add definition into Scope::Root"),
             Scope::Block { ref mut items, .. } |
             Scope::Function { args: ref mut items, .. } => {
                 items.push(Rc::new(symbol.clone()));
-                Rc::clone(&scope_key)
             },
         }
     }
