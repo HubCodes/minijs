@@ -8,5 +8,3 @@ edition = "2018"
 
 [dependencies]
 lang = { path = "../lang", version = "0.1.0" }
-cfg = { path = "../cfg", version = "0.1.0" }
-sema = { path = "../sema", version = "0.1.0" }

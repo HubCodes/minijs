@@ -1,17 +1,14 @@
 use parser::parse;
-use sema::from_ast::SymbolTableBuilder;
 
 fn main() {
     let code =
         "(function(a){
-            let x = 1;
+            let x = { b: 1 };
         })();
         ";
     let ast = parse(code);
-    let mut symbol_table_builder = SymbolTableBuilder::new();
-    let symbol_table = match ast {
-        Ok(ast) => symbol_table_builder.from_ast(&ast),
+    match ast {
+        Ok(ast) => println!("{:#?}", ast),
         Err(_) => panic!(":("),
-    };
-    print!("{:#?}", symbol_table);
+    }
 }

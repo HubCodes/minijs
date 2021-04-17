@@ -1,6 +1,7 @@
 use std::collections::HashMap;
 use std::rc::Rc;
 
+#[derive(Debug)]
 pub struct Program {
     pub stmt: Stmt,
     pub scope_key: Rc<ScopeKey>,

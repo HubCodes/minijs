@@ -1,5 +1,3 @@
-use crate::ast::Symbol;
-
 pub enum IR {
     Pop,
     PushBool { value: bool },
@@ -13,6 +11,9 @@ pub enum IR {
     StoreMember { target_index: i32 },
     LoadCallable { target_callable_index: i32 },
     Call { argc: i32 },
+    JumpIfTrue { offset: i32 },
+    JumpIfFalse { offset: i32 },
+    Return,
     Add,
     Sub,
     Mul,
@@ -35,5 +36,12 @@ pub enum IR {
 }
 
 pub struct BasicBlock {
-    codes: Vec<IR>,
+    pub label: i32,
+    pub codes: Vec<IR>,
+}
+
+impl BasicBlock {
+    pub fn new(label: i32) -> BasicBlock {
+        BasicBlock { label, codes: Vec::new() }
+    }
 }
