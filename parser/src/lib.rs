@@ -6,14 +6,12 @@ mod state;
 use state::State;
 use lang::ast::*;
 use lalrpop_util::{ParseError, lexer};
-use std::rc::Rc;
 
 lalrpop_mod!(grammar);
 
 pub fn parse(code: &str) -> Result<Program, ParseError<usize, lexer::Token, &str>> {
     let mut state = State::new();
-    let scope_key = Rc::new(ScopeKey(state.next_scope_id()));
-    grammar::StmtParser::new().parse(&mut state, code).map(|stmt| Program { stmt, scope_key })
+    grammar::StmtParser::new().parse(&mut state, code).map(|stmt| Program { stmt })
 }
 
 #[cfg(test)]
@@ -116,7 +114,7 @@ mod tests {
         let parse_result = EXPR_PARSER.parse(&mut state, "a[1]").unwrap();
         let target_symbol = Expr::Term(Term::Symbol(Symbol::new(0, "a")));
         let target_index = Expr::Term(Term::Num(Num::Int(1)));
-        let expected = Expr::Binop(Binop::Index, Box::new(target_symbol), Box::new(target_index));
+        let expected = Expr::Index(Box::new(target_symbol), Box::new(target_index));
         assert_eq!(expected, parse_result);
     }
 
@@ -127,8 +125,8 @@ mod tests {
         let target_symbol = Expr::Term(Term::Symbol(Symbol::new(0, "a")));
         let target_index_inner = Expr::Term(Term::Num(Num::Int(1)));
         let target_index_outer = Expr::Term(Term::Num(Num::Int(2)));
-        let expected_inner = Expr::Binop(Binop::Index, Box::new(target_symbol), Box::new(target_index_inner));
-        let expected = Expr::Binop(Binop::Index, Box::new(expected_inner), Box::new(target_index_outer));
+        let expected_inner = Expr::Index(Box::new(target_symbol), Box::new(target_index_inner));
+        let expected = Expr::Index(Box::new(expected_inner), Box::new(target_index_outer));
         assert_eq!(expected, parse_result);
     }
 
@@ -167,8 +165,8 @@ mod tests {
         let mut state = State::new();
         let parse_result = EXPR_PARSER.parse(&mut state, "foo.bar").unwrap();
         let target_symbol_left = Expr::Term(Term::Symbol(Symbol::new(0, "foo")));
-        let target_symbol_right = Expr::Term(Term::Symbol(Symbol::new(1, "bar")));
-        let expected = Expr::Binop(Binop::Member, Box::new(target_symbol_left), Box::new(target_symbol_right));
+        let target_symbol_right = Symbol::new(1, "bar");
+        let expected = Expr::Member(Box::new(target_symbol_left), target_symbol_right.clone());
         assert_eq!(expected, parse_result);
     }
 
@@ -177,7 +175,7 @@ mod tests {
         let mut state = State::new();
         let parse_result = EXPR_PARSER.parse(&mut state, "typeof foo").unwrap();
         let target_expr = Expr::Term(Term::Symbol(Symbol::new(0, "foo")));
-        let expected = Expr::Unop(Unop::Typeof, Box::new(target_expr));
+        let expected = Expr::Typeof(Box::new(target_expr));
         assert_eq!(expected, parse_result);
     }
 

@@ -35,7 +35,7 @@ impl Translator {
             Stmt::Expr(expr) => self.trans_expr(expr),
             Stmt::VarDef(symbol, init) => (),
             Stmt::If(cond, then, els) => (),
-            Stmt::Block(stmts, scope_key) => (),
+            Stmt::Block(stmts) => (),
         }
     }
 
@@ -43,9 +43,8 @@ impl Translator {
         match expr {
             Expr::Term(term) => self.trans_term(term),
             Expr::Binop(op, left, right) => (),
-            Expr::Unop(op, operand) => (),
             Expr::Call(target, args) => (),
-            Expr::Lambda(args, body, scope_key) => (),
+            Expr::Lambda(args, body) => (),
         }
     }
 

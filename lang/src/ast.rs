@@ -1,10 +1,8 @@
 use std::collections::HashMap;
-use std::rc::Rc;
 
 #[derive(Debug)]
 pub struct Program {
     pub stmt: Stmt,
-    pub scope_key: Rc<ScopeKey>,
 }
 
 #[derive(Debug, PartialEq)]
@@ -12,27 +10,22 @@ pub enum Stmt {
     Expr(Expr),
     VarDef(Symbol, Option<Expr>),
     If(Expr, Box<Stmt>, Option<Box<Stmt>>),
-    Block(Vec<Stmt>, Rc<ScopeKey>),
+    Block(Vec<Stmt>),
 }
 
 #[derive(Debug, PartialEq)]
 pub enum Expr {
     Term(Term),
+    Index(Box<Expr>, Box<Expr>),
+    Member(Box<Expr>, Symbol),
     Binop(Binop, Box<Expr>, Box<Expr>),
-    Unop(Unop, Box<Expr>),
+    Typeof(Box<Expr>),
     Call(Box<Expr>, Vec<Expr>),
-    Lambda(Vec<Expr>, Box<Stmt>, Rc<ScopeKey>),
-}
-
-#[derive(Debug, PartialEq)]
-pub enum Unop {
-    Typeof,
+    Lambda(Vec<Expr>, Box<Stmt>),
 }
 
 #[derive(Debug, PartialEq)]
 pub enum Binop {
-    Index,
-    Member,
     Mul,
     Div,
     Mod,
@@ -79,18 +72,9 @@ pub struct Symbol {
     pub name: String,
 }
 
-#[derive(Debug, Clone, PartialEq, Eq, Hash)]
-pub struct ScopeKey(pub i32);
-
 impl Symbol {
     pub fn new(id: i32, name: &str) -> Symbol {
         Symbol { id, name: name.to_string() }
-    }
-}
-
-impl ScopeKey {
-    pub fn new(id: i32) -> ScopeKey {
-        ScopeKey(id)
     }
 }
 
