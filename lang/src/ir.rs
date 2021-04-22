@@ -1,16 +1,16 @@
+use crate::ast::Symbol;
+
 pub enum IR {
     Pop,
     PushBool { value: bool },
     PushInt { value: i32 },
     PushDouble { value: f64 },
-    PushString { value_index: i32 },
-    MakeObject { kv_count: i32 },
-    Load { target_index: i32 },
-    Store { target_index: i32 },
-    LoadMember { target_index: i32 },
-    StoreMember { target_index: i32 },
-    LoadCallable { target_callable_index: i32 },
-    Call { argc: i32 },
+    AllocString { value: Box<String> },
+    MakeObject { kv_count: usize },
+    Load { target: Box<Symbol> },
+    LoadMember { target: Box<Symbol> },
+    LoadMemberIndex,
+    Call { argc: usize },
     JumpIfTrue { offset: i32 },
     JumpIfFalse { offset: i32 },
     Return,
@@ -33,6 +33,7 @@ pub enum IR {
     And,
     Or,
     Typeof,
+    Assign,
 }
 
 pub struct BasicBlock {

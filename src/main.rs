@@ -3,7 +3,7 @@ use parser::parse;
 fn main() {
     let code =
         "(function(a){
-            let x = { b: 1 };
+            x.y.z.w;
         })();
         ";
     let ast = parse(code);

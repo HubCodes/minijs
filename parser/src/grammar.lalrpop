@@ -76,7 +76,7 @@ Lambda: Expr = {
 }
 
 AssignExpr: Expr = {
-    <e:UnaryExpr> "=" <a:AssignExpr> => Expr::Binop(Binop::Assign, Box::new(e), Box::new(a)),
+    <e:UnaryExpr> "=" <a:AssignExpr> => Expr::Assign(Box::new(e), Box::new(a)),
     OrExpr,
 }
 

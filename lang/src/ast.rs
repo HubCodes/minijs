@@ -18,6 +18,7 @@ pub enum Expr {
     Term(Term),
     Index(Box<Expr>, Box<Expr>),
     Member(Box<Expr>, Symbol),
+    Assign(Box<Expr>, Box<Expr>),
     Binop(Binop, Box<Expr>, Box<Expr>),
     Typeof(Box<Expr>),
     Call(Box<Expr>, Vec<Expr>),
@@ -44,7 +45,6 @@ pub enum Binop {
     BitOr,
     And,
     Or,
-    Assign,
 }
 
 #[derive(Debug, PartialEq)]
