@@ -105,7 +105,30 @@ impl Translator {
     }
 
     fn binop(&mut self, op: Binop, lhs: Box<Expr>, rhs: Box<Expr>) {
-        unimplemented!();
+        let inst = match op {
+            Binop::Mul => IR::Mul,
+            Binop::Div => IR::Div,
+            Binop::Mod => IR::Mod,
+            Binop::Add => IR::Add,
+            Binop::Sub => IR::Sub,
+            Binop::Shl => IR::Shl,
+            Binop::Shr => IR::Shr,
+            Binop::Lt => IR::Lt,
+            Binop::Gt => IR::Gt,
+            Binop::Lte => IR::Lte,
+            Binop::Gte => IR::Gte,
+            Binop::Eq => IR::Eq,
+            Binop::Neq => IR::Neq,
+            Binop::BitAnd => IR::BitAnd,
+            Binop::Xor => IR::Xor,
+            Binop::BitOr => IR::BitOr,
+            Binop::And => IR::And,
+            Binop::Or => IR::Or,
+        };
+
+        self.expr(*lhs);
+        self.expr(*rhs);
+        self.code_writer.write(inst);
     }
 
     fn typeof_expr(&mut self, expr: Box<Expr>) {
