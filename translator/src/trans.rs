@@ -35,6 +35,27 @@ impl Translator {
     }
 
     fn term(&mut self, term: Term) {
+        match term {
+            Term::Symbol(sym) => self.symbol(sym),
+            Term::Num(num) => self.num(num),
+            Term::Obj(obj) => self.obj(obj),
+            Term::Str(str) => self.str(str),
+        }
+    }
+
+    fn symbol(&mut self, sym: Symbol) {
+        unimplemented!();
+    }
+
+    fn num(&mut self, num: Num) {
+        unimplemented!();
+    }
+
+    fn obj(&mut self, obj: Obj) {
+        unimplemented!();
+    }
+
+    fn str(&mut self, str: String) {
         unimplemented!();
     }
 
