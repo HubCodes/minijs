@@ -7,7 +7,6 @@ pub enum IR {
     PushInt { value: i32 },
     PushDouble { value: f64 },
     PushString { value: String },
-    AllocString { value: Box<String> },
     MakeObject { kv_count: usize },
     Load { target: Box<Symbol> },
     LoadMember { target: Box<Symbol> },

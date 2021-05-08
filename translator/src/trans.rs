@@ -57,7 +57,8 @@ impl Translator {
          */
         match num {
             Num::Int(value) => self.code_writer.write(IR::PushInt { value }),
-            Num::Double(value) => self.code_writer.write(IR::PushDouble { value }),
+            Num::Double(value) =>
+                self.code_writer.write(IR::PushDouble { value }),
         }
     }
 
@@ -73,7 +74,7 @@ impl Translator {
     }
 
     fn str(&mut self, str: String) {
-        unimplemented!();
+        self.code_writer.write(IR::PushString { value: str });
     }
 
     fn index(&mut self, lhs: Box<Expr>, rhs: Box<Expr>) {
