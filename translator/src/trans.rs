@@ -52,7 +52,13 @@ impl Translator {
     }
 
     fn num(&mut self, num: Num) {
-        unimplemented!();
+        /*
+          Pushes number into VM stack.
+         */
+        match num {
+            Num::Int(value) => self.code_writer.write(IR::PushInt { value }),
+            Num::Double(value) => self.code_writer.write(IR::PushDouble { value }),
+        }
     }
 
     fn obj(&mut self, obj: Obj) {
