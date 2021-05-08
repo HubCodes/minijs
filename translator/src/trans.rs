@@ -30,7 +30,7 @@ impl Translator {
             Expr::Binop(op, lhs, rhs) => self.binop(op, lhs, rhs),
             Expr::Typeof(expr) => self.typeof_expr(expr),
             Expr::Call(func, args) => self.call(func, args),
-            Expr::Lambda(args, body) => self.lambda(args, body),
+            Expr::Lambda(sym, args, body) => self.lambda(sym, args, body),
         }
     }
 
@@ -44,7 +44,11 @@ impl Translator {
     }
 
     fn symbol(&mut self, sym: Symbol) {
-        unimplemented!();
+        /*
+          In this context, Symbol always means "load variable from env", So
+          proper IR is Load.
+         */
+        self.code_writer.write(IR::Load { target: Box::new(sym) });
     }
 
     fn num(&mut self, num: Num) {
@@ -83,7 +87,7 @@ impl Translator {
         unimplemented!();
     }
 
-    fn lambda(&mut self, args: Vec<Expr>, body: Box<Stmt>) {
+    fn lambda(&mut self, sym: Symbol, args: Vec<Expr>, body: Box<Stmt>) {
         unimplemented!();
     }
 
