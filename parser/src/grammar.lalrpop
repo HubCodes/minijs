@@ -27,8 +27,8 @@ If: Stmt = {
         let block_name = Uuid::new_v4();
         let block_symbol = Symbol { id: state.next_symbol_id(), name: block_name.to_string() };
         match ss {
-            Some(ss) => Stmt::If(c, Box::new(Stmt::Block(block_symbol, ss)), None),
-            None => Stmt::If(c, Box::new(Stmt::Block(block_symbol, vec![])), None),
+            Some(ss) => Stmt::If(c, Box::new(Block::new(block_symbol, ss)), None),
+            None => Stmt::If(c, Box::new(Block::new(block_symbol, vec![])), None),
         }
     },
 }
@@ -62,25 +62,25 @@ Lambda: Expr = {
                 Expr::Lambda(
                     lambda_sym,
                     es,
-                    Box::new(Stmt::Block(block_sym, ss)),
+                    Box::new(Stmt::Block(Block::new(block_sym, ss))),
                 ),
             (None, Some(ss)) =>
                 Expr::Lambda(
                     lambda_sym,
                     vec![],
-                    Box::new(Stmt::Block(block_sym, ss)),
+                    Box::new(Stmt::Block(Block::new(block_sym, ss))),
                 ),
             (Some(es), None) =>
                 Expr::Lambda(
                     lambda_sym,
                     es,
-                    Box::new(Stmt::Block(block_sym, vec![])),
+                    Box::new(Stmt::Block(Block::new(block_sym, vec![]))),
                 ),
             (None, None) =>
                 Expr::Lambda(
                     lambda_sym,
                     vec![],
-                    Box::new(Stmt::Block(block_sym, vec![])),
+                    Box::new(Stmt::Block(Block::new(block_sym, vec![]))),
                 ),
         }
     }

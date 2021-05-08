@@ -9,8 +9,20 @@ pub struct Program {
 pub enum Stmt {
     Expr(Expr),
     VarDef(Symbol, Option<Expr>),
-    If(Expr, Box<Stmt>, Option<Box<Stmt>>),
-    Block(Symbol, Vec<Stmt>),
+    If(Expr, Box<Block>, Option<Box<Block>>),
+    Block(Block),
+}
+
+#[derive(Debug, PartialEq)]
+pub struct Block {
+    pub symbol: Symbol,
+    pub body: Vec<Stmt>,
+}
+
+impl Block {
+    pub fn new(symbol: Symbol, body: Vec<Stmt>) -> Block {
+        Block { symbol, body }
+    }
 }
 
 #[derive(Debug, PartialEq)]

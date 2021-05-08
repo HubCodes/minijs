@@ -14,15 +14,15 @@ impl Translator {
 
     fn stmt(&mut self, ast: Stmt) {
         match ast {
-            Stmt::Block(sym, block) => self.block(sym, block),
+            Stmt::Block(block) => self.block(block),
             Stmt::Expr(expr) => self.expr(expr),
             Stmt::If(cond, then, els) => self.if_stmt(cond, then, els),
             Stmt::VarDef(name, init) => self.var_def(name, init),
         }
     }
 
-    fn block(&mut self, sym: Symbol, block: Vec<Stmt>) {
-        self.code_writer.push_ctxt(sym, None);
+    fn block(&mut self, block: Block) {
+        self.code_writer.push_ctxt(block.sym, None);
         block.into_iter().for_each(|x| self.stmt(x));
         self.code_writer.pop_ctxt();
     }
@@ -155,11 +155,19 @@ impl Translator {
         self.code_writer.push_ctxt(sym.clone(), Some(args));
         self.stmt(*body);
         self.code_writer.pop_ctxt();
-        self.code_writer.write(IR::FuncRef { symbol: sym });
+        self.code_writer.write(IR::FuncRef { symbol: Box::new(sym) });
     }
 
-    fn if_stmt(&mut self, cond: Expr, then: Box<Stmt>, els: Option<Box<Stmt>>) {
-        unimplemented!();
+    fn if_stmt(&mut self, cond: Expr, then: Box<Block>, els: Option<Box<Block>>) {
+        self.expr(cond);
+        self.code_writer.write(IR::JumpCond {
+            on_true: Box::new(then.symbol.clone()),
+            on_false: els.map(|x| Box::new(x.symbol)),
+        });
+        self.block(*then);
+        if let Some(else_block) = els {
+            self.block(*else_block);
+        }
     }
 
     fn var_def(&mut self, name: Symbol, init: Option<Expr>) {
