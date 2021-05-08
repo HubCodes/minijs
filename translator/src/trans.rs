@@ -8,7 +8,9 @@ pub struct Translator {
 
 impl Translator {
     pub fn trans(&mut self, ast: Program) -> ByteCode {
+        self.code_writer.push_ctxt(Symbol::new(-1, "<root>"), None);
         self.stmt(ast.stmt);
+        self.code_writer.pop_ctxt();
         self.code_writer.emit_bytecode()
     }
 
