@@ -12,6 +12,7 @@ pub enum IR {
     LoadMember { target: Box<Symbol> },
     LoadMemberIndex,
     Call { argc: usize },
+    FuncRef { symbol: Symbol },
     JumpIfTrue { offset: i32 },
     JumpIfFalse { offset: i32 },
     Return,
@@ -38,13 +39,14 @@ pub enum IR {
 }
 
 pub struct BasicBlock {
-    pub label: i32,
-    codes: Vec<IR>,
+    pub symbol: Symbol,
+    pub codes: Vec<IR>,
+    pub args: Option<Vec<Symbol>>,
 }
 
 impl BasicBlock {
-    pub fn new(label: i32) -> BasicBlock {
-        BasicBlock { label, codes: Vec::new() }
+    pub fn new(symbol: Symbol, args: Option<Vec<Symbol>>) -> BasicBlock {
+        BasicBlock { symbol, args, codes: Vec::new() }
     }
 
     pub fn push(&mut self, ir: IR) {
@@ -61,22 +63,7 @@ impl ByteCode {
         ByteCode { code: HashMap::new() }
     }
 
-    pub fn add(&mut self, sym: Symbol, bb: BasicBlock) {
-        self.code.insert(sym, bb);
-    }
-}
-
-pub struct BasicBlockGenerator {
-    next_label: i32,
-}
-
-impl BasicBlockGenerator {
-    pub fn new() -> BasicBlockGenerator {
-        BasicBlockGenerator { next_label: 0 }
-    }
-
-    pub fn next(&mut self) -> BasicBlock {
-        self.next_label += 1;
-        BasicBlock::new(self.next_label)
+    pub fn add(&mut self, bb: BasicBlock) {
+        self.code.insert(bb.symbol.clone(), bb);
     }
 }

@@ -14,11 +14,17 @@ impl Translator {
 
     fn stmt(&mut self, ast: Stmt) {
         match ast {
-            Stmt::Block(sym, block) => block.into_iter().for_each(|x| self.stmt(x)),
+            Stmt::Block(sym, block) => self.block(sym, block),
             Stmt::Expr(expr) => self.expr(expr),
             Stmt::If(cond, then, els) => self.if_stmt(cond, then, els),
             Stmt::VarDef(name, init) => self.var_def(name, init),
         }
+    }
+
+    fn block(&mut self, sym: Symbol, block: Vec<Stmt>) {
+        self.code_writer.push_ctxt(sym, None);
+        block.into_iter().for_each(|x| self.stmt(x));
+        self.code_writer.pop_ctxt();
     }
 
     fn expr(&mut self, ast: Expr) {
@@ -145,8 +151,11 @@ impl Translator {
         self.code_writer.write(IR::Call { argc });
     }
 
-    fn lambda(&mut self, sym: Symbol, args: Vec<Expr>, body: Box<Stmt>) {
-
+    fn lambda(&mut self, sym: Symbol, args: Vec<Symbol>, body: Box<Stmt>) {
+        self.code_writer.push_ctxt(sym.clone(), Some(args));
+        self.stmt(*body);
+        self.code_writer.pop_ctxt();
+        self.code_writer.write(IR::FuncRef { symbol: sym });
     }
 
     fn if_stmt(&mut self, cond: Expr, then: Box<Stmt>, els: Option<Box<Stmt>>) {

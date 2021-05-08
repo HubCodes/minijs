@@ -52,7 +52,7 @@ pub Expr: Expr = {
 }
 
 Lambda: Expr = {
-    "function" "(" <es:Exprs?> ")" "{" <ss:StmtList?> "}" => {
+    "function" "(" <es:Args?> ")" "{" <ss:StmtList?> "}" => {
         let lambda_name = Uuid::new_v4();
         let block_name = Uuid::new_v4();
         let lambda_sym = Symbol { id: state.next_symbol_id(), name: lambda_name.to_string() };
@@ -218,6 +218,15 @@ Exprs: Vec<Expr> = {
         es
     },
     Expr => vec![<>],
+}
+
+Args: Vec<Symbol> = {
+    <ss:Args> "," <s:Symbol> => {
+        let mut ss = ss;
+        ss.push(s);
+        ss
+    },
+    Symbol => vec![<>],
 }
 
 Number: Num = {
