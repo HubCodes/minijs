@@ -39,12 +39,16 @@ pub enum IR {
 
 pub struct BasicBlock {
     pub label: i32,
-    pub codes: Vec<IR>,
+    codes: Vec<IR>,
 }
 
 impl BasicBlock {
     pub fn new(label: i32) -> BasicBlock {
         BasicBlock { label, codes: Vec::new() }
+    }
+
+    pub fn push(&mut self, ir: IR) {
+        self.codes.push(ir);
     }
 }
 
