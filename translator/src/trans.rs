@@ -132,7 +132,8 @@ impl Translator {
     }
 
     fn typeof_expr(&mut self, expr: Box<Expr>) {
-        unimplemented!();
+        self.expr(*expr);
+        self.code_writer.write(IR::Typeof);
     }
 
     fn call(&mut self, func: Box<Expr>, args: Vec<Expr>) {
