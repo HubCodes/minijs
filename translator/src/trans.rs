@@ -62,7 +62,14 @@ impl Translator {
     }
 
     fn obj(&mut self, obj: Obj) {
-        unimplemented!();
+        /*
+          Objects are can nested, but the VM resolves nesting recursively :)
+         */
+        for (key, value) in obj.kv {
+            self.expr(value);
+            self.code_writer.write(IR::PushString { value: key });
+        }
+        self.code_writer.write(IR::MakeObject { kv_count: obj.kv.len() });
     }
 
     fn str(&mut self, str: String) {
