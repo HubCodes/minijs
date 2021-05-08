@@ -96,7 +96,12 @@ impl Translator {
     }
 
     fn assign(&mut self, lhs: Box<Expr>, rhs: Box<Expr>) {
-        unimplemented!();
+        /*
+          Assign Top of stack into Top-1 of stack.
+         */
+        self.expr(*lhs);
+        self.expr(*rhs);
+        self.code_writer.write(IR::Assign);
     }
 
     fn binop(&mut self, op: Binop, lhs: Box<Expr>, rhs: Box<Expr>) {
