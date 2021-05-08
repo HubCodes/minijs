@@ -5,7 +5,7 @@ pub struct CodeWriter {
 }
 
 impl CodeWriter {
-    fn emit_bytecode(&self) -> ByteCode {
+    pub fn emit_bytecode(&self) -> ByteCode {
         unimplemented!();
     }
 }
