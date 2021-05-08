@@ -22,7 +22,7 @@ pub enum Expr {
     Binop(Binop, Box<Expr>, Box<Expr>),
     Typeof(Box<Expr>),
     Call(Box<Expr>, Vec<Expr>),
-    Lambda(Vec<Expr>, Box<Stmt>),
+    Lambda(Symbol, Vec<Expr>, Box<Stmt>),
 }
 
 #[derive(Debug, PartialEq)]

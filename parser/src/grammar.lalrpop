@@ -50,24 +50,29 @@ pub Expr: Expr = {
 
 Lambda: Expr = {
     "function" "(" <es:Exprs?> ")" "{" <ss:StmtList?> "}" => {
+        let sym = Symbol { id: state.next_symbol_id(), name: s.to_string() };
         match (es, ss) {
             (Some(es), Some(ss)) =>
                 Expr::Lambda(
+                    sym,
                     es,
                     Box::new(Stmt::Block(ss)),
                 ),
             (None, Some(ss)) =>
                 Expr::Lambda(
+                    sym,
                     vec![],
                     Box::new(Stmt::Block(ss)),
                 ),
             (Some(es), None) =>
                 Expr::Lambda(
+                    sym,
                     es,
                     Box::new(Stmt::Block(vec![])),
                 ),
             (None, None) =>
                 Expr::Lambda(
+                    sym,
                     vec![],
                     Box::new(Stmt::Block(vec![])),
                 ),
