@@ -78,7 +78,12 @@ impl Translator {
     }
 
     fn index(&mut self, lhs: Box<Expr>, rhs: Box<Expr>) {
-        unimplemented!();
+        /*
+          Index exprs such as a[i] represents object access via key.
+         */
+        self.expr(*lhs);
+        self.expr(*rhs);
+        self.code_writer.write(IR::LoadMemberIndex);
     }
 
     fn member(&mut self, lhs: Box<Expr>, rhs: Symbol) {
