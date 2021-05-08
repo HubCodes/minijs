@@ -137,7 +137,9 @@ impl Translator {
     }
 
     fn call(&mut self, func: Box<Expr>, args: Vec<Expr>) {
-        unimplemented!();
+        self.expr(*func);
+        args.into_iter().for_each(|x| self.expr(x));
+        self.code_writer.write(IR::Call { argc: args.len() });
     }
 
     fn lambda(&mut self, sym: Symbol, args: Vec<Expr>, body: Box<Stmt>) {
