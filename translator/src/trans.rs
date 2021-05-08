@@ -87,7 +87,12 @@ impl Translator {
     }
 
     fn member(&mut self, lhs: Box<Expr>, rhs: Symbol) {
-        unimplemented!();
+        /*
+          Member exprs such as a.i represents object access via key which is
+          compatible with language symbol.
+         */
+        self.expr(*lhs);
+        self.code_writer.write(IR::LoadMember { target: Box::new(rhs) });
     }
 
     fn assign(&mut self, lhs: Box<Expr>, rhs: Box<Expr>) {
