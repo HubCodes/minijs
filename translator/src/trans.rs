@@ -171,6 +171,14 @@ impl Translator {
     }
 
     fn var_def(&mut self, name: Symbol, init: Option<Expr>) {
-        unimplemented!();
+        self.code_writer.write(IR::NewLet { symbol: Box::new(name.clone()) });
+        if let Some(expr) = init {
+            /*
+              Symbol loads reference, not value
+             */
+            self.symbol(name);
+            self.expr(expr);
+            self.code_writer.write(IR::Assign);
+        }
     }
 }

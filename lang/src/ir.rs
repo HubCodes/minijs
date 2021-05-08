@@ -14,6 +14,7 @@ pub enum IR {
     Call { argc: usize },
     FuncRef { symbol: Box<Symbol> },
     JumpCond { on_true: Box<Symbol>, on_false: Option<Box<Symbol>> },
+    NewLet { symbol: Box<Symbol> },
     Return,
     Add,
     Sub,
