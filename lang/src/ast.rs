@@ -10,7 +10,7 @@ pub enum Stmt {
     Expr(Expr),
     VarDef(Symbol, Option<Expr>),
     If(Expr, Box<Stmt>, Option<Box<Stmt>>),
-    Block(Vec<Stmt>),
+    Block(Symbol, Vec<Stmt>),
 }
 
 #[derive(Debug, PartialEq)]

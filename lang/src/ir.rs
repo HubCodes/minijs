@@ -53,5 +53,30 @@ impl BasicBlock {
 }
 
 pub struct ByteCode {
-    pub code: HashMap<Symbol, BasicBlock>,
+    code: HashMap<Symbol, BasicBlock>,
+}
+
+impl ByteCode {
+    pub fn new() -> ByteCode {
+        ByteCode { code: HashMap::new() }
+    }
+
+    pub fn add(&mut self, sym: Symbol, bb: BasicBlock) {
+        self.code.insert(sym, bb);
+    }
+}
+
+pub struct BasicBlockGenerator {
+    next_label: i32,
+}
+
+impl BasicBlockGenerator {
+    pub fn new() -> BasicBlockGenerator {
+        BasicBlockGenerator { next_label: 0 }
+    }
+
+    pub fn next(&mut self) -> BasicBlock {
+        self.next_label += 1;
+        BasicBlock::new(self.next_label)
+    }
 }

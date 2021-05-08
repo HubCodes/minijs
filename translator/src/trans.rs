@@ -14,7 +14,7 @@ impl Translator {
 
     fn stmt(&mut self, ast: Stmt) {
         match ast {
-            Stmt::Block(block) => block.into_iter().for_each(|x| self.stmt(x)),
+            Stmt::Block(sym, block) => block.into_iter().for_each(|x| self.stmt(x)),
             Stmt::Expr(expr) => self.expr(expr),
             Stmt::If(cond, then, els) => self.if_stmt(cond, then, els),
             Stmt::VarDef(name, init) => self.var_def(name, init),
@@ -66,11 +66,12 @@ impl Translator {
         /*
           Objects are can nested, but the VM resolves nesting recursively :)
          */
+        let kv_count = obj.kv.len();
         for (key, value) in obj.kv {
             self.expr(value);
             self.code_writer.write(IR::PushString { value: key });
         }
-        self.code_writer.write(IR::MakeObject { kv_count: obj.kv.len() });
+        self.code_writer.write(IR::MakeObject { kv_count });
     }
 
     fn str(&mut self, str: String) {
@@ -138,12 +139,14 @@ impl Translator {
 
     fn call(&mut self, func: Box<Expr>, args: Vec<Expr>) {
         self.expr(*func);
+
+        let argc = args.len();
         args.into_iter().for_each(|x| self.expr(x));
-        self.code_writer.write(IR::Call { argc: args.len() });
+        self.code_writer.write(IR::Call { argc });
     }
 
     fn lambda(&mut self, sym: Symbol, args: Vec<Expr>, body: Box<Stmt>) {
-        unimplemented!();
+
     }
 
     fn if_stmt(&mut self, cond: Expr, then: Box<Stmt>, els: Option<Box<Stmt>>) {

@@ -3,6 +3,7 @@ use std::collections::HashMap;
 use std::str::FromStr;
 use lang::ast::*;
 use lalrpop_util::ParseError;
+use uuid::Uuid;
 
 grammar(state: &mut State);
 
@@ -23,9 +24,11 @@ VarDef: Stmt = {
 
 If: Stmt = {
     "if" "(" <c:Expr> ")" "{" <ss:StmtList?> "}" => {
+        let block_name = Uuid::new_v4();
+        let block_symbol = Symbol { id: state.next_symbol_id(), name: block_name.to_string() };
         match ss {
-            Some(ss) => Stmt::If(c, Box::new(Stmt::Block(ss)), None),
-            None => Stmt::If(c, Box::new(Stmt::Block(vec![])), None),
+            Some(ss) => Stmt::If(c, Box::new(Stmt::Block(block_symbol, ss)), None),
+            None => Stmt::If(c, Box::new(Stmt::Block(block_symbol, vec![])), None),
         }
     },
 }
@@ -50,31 +53,34 @@ pub Expr: Expr = {
 
 Lambda: Expr = {
     "function" "(" <es:Exprs?> ")" "{" <ss:StmtList?> "}" => {
-        let sym = Symbol { id: state.next_symbol_id(), name: s.to_string() };
+        let lambda_name = Uuid::new_v4();
+        let block_name = Uuid::new_v4();
+        let lambda_sym = Symbol { id: state.next_symbol_id(), name: lambda_name.to_string() };
+        let block_sym = Symbol { id: state.next_symbol_id(), name: block_name.to_string() };
         match (es, ss) {
             (Some(es), Some(ss)) =>
                 Expr::Lambda(
-                    sym,
+                    lambda_sym,
                     es,
-                    Box::new(Stmt::Block(ss)),
+                    Box::new(Stmt::Block(block_sym, ss)),
                 ),
             (None, Some(ss)) =>
                 Expr::Lambda(
-                    sym,
+                    lambda_sym,
                     vec![],
-                    Box::new(Stmt::Block(ss)),
+                    Box::new(Stmt::Block(block_sym, ss)),
                 ),
             (Some(es), None) =>
                 Expr::Lambda(
-                    sym,
+                    lambda_sym,
                     es,
-                    Box::new(Stmt::Block(vec![])),
+                    Box::new(Stmt::Block(block_sym, vec![])),
                 ),
             (None, None) =>
                 Expr::Lambda(
-                    sym,
+                    lambda_sym,
                     vec![],
-                    Box::new(Stmt::Block(vec![])),
+                    Box::new(Stmt::Block(block_sym, vec![])),
                 ),
         }
     }
