@@ -1,4 +1,5 @@
 use crate::ast::Symbol;
+use std::collections::HashMap;
 
 pub enum IR {
     Pop,
@@ -45,4 +46,8 @@ impl BasicBlock {
     pub fn new(label: i32) -> BasicBlock {
         BasicBlock { label, codes: Vec::new() }
     }
+}
+
+pub struct ByteCode {
+    pub code: HashMap<Symbol, BasicBlock>,
 }

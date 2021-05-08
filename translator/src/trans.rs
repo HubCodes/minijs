@@ -1,72 +1,35 @@
 use lang::ast::*;
-use std::rc::Rc;
-use sema::symtable::SymbolTable;
-use lang::ir::{BasicBlock, IR};
+use lang::ir::*;
+use crate::code_writer::CodeWriter;
 
 pub struct Translator {
-    ast: Box<Program>,
-    symbol_table: Box<SymbolTable>,
-    trans_stack: Vec<BasicBlock>,
-    code_unit_label: i32,
-    basic_block_label: i32,
+    code_writer: CodeWriter,
 }
 
 impl Translator {
-    pub fn new(ast: Box<Program>, symbol_table: Box<SymbolTable>) -> Translator {
-        Translator {
-            ast,
-            symbol_table,
-            trans_stack: Vec::new(),
-            code_unit_label: 0,
-            basic_block_label: 0,
+    pub fn trans(&mut self, ast: Program) -> ByteCode {
+        self.stmt(ast.stmt);
+        code_writer.emit_bytecode()
+    }
+
+    fn stmt(&mut self, ast: Stmt) {
+        match ast {
+            Stmt::Block(block) => block.into_iter().for_each(|x| self.stmt(x)),
+            Stmt::Expr(expr) => self.expr(expr),
+            Stmt::If(cond, then, els) => self.if_stmt(cond, then, els),
+            Stmt::VarDef(name, init) => self.var_def(name, init),
         }
     }
 
-    pub fn translate_intermediate(&mut self) -> Rc<Vec<CodeUnit>> {
-        let root_stmt = self.ast.stmt;
-        self.trans_stack.push(BasicBlock::new(self.basic_block_label));
-        self.basic_block_label += 1;
-        self.trans_stmt(&root_stmt);
-        Rc::clone(&self.code_units)
+    fn expr(&mut self, ast: Expr) {
+        unimplemented!();
     }
 
-    fn trans_stmt(&mut self, stmt: &Stmt) {
-        match stmt {
-            Stmt::Expr(expr) => self.trans_expr(expr),
-            Stmt::VarDef(symbol, init) => (),
-            Stmt::If(cond, then, els) => (),
-            Stmt::Block(stmts) => (),
-        }
+    fn if_stmt(&mut self, cond: Expr, then: Box<Stmt>, els: Option<Box<Stmt>>) {
+        unimplemented!();
     }
 
-    fn trans_expr(&mut self, expr: &Expr) {
-        match expr {
-            Expr::Term(term) => self.trans_term(term),
-            Expr::Binop(op, left, right) => (),
-            Expr::Call(target, args) => (),
-            Expr::Lambda(args, body) => (),
-        }
-    }
-
-    fn trans_term(&mut self, term: &Term) {
-        match term {
-            Term::Obj(obj) => (),
-            Term::Num(num) => self.trans_num(num),
-            Term::Str(str) => (),
-            Term::Symbol(symbol) => (),
-        }
-    }
-
-    fn trans_num(&mut self, num: &Num) {
-        match num {
-            Num::Int(int) => {
-                let ir = IR::PushInt { value: *int };
-                self.trans_stack.last_mut().unwrap().codes.push(ir);
-            },
-            Num::Double(double) => {
-                let ir = IR::PushDouble { value: *double };
-                self.trans_stack.last_mut().unwrap().codes.push(ir);
-            }
-        }
+    fn var_def(&mut self, name: Symbol, init: Option<Expr>) {
+        unimplemented!();
     }
 }
