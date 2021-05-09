@@ -9,3 +9,4 @@ edition = "2018"
 [dependencies]
 parser = { path = "parser" }
 translator = { path = "translator" }
+vm = { path = "vm" }

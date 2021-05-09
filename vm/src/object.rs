@@ -20,7 +20,16 @@ pub struct Object {
 
 impl Object {
     pub fn init_bool(obj: *mut Object, value: bool) {
-        obj.prototype = null_mut();
-        obj.data = Data::Primitive(Primitive::Boolean(value));
+        unsafe {
+            (*obj).prototype = null_mut();
+            (*obj).data = Data::Primitive(Primitive::Boolean(value));
+        }
+    }
+
+    pub fn init_int(obj: *mut Object, value: i32) {
+        unsafe {
+            (*obj).prototype = null_mut();
+            (*obj).data = Data::Primitive(Primitive::Int(value));
+        }
     }
 }

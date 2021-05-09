@@ -14,7 +14,7 @@ impl Allocator {
             if self.ptr.add(self.size as usize) <= next_last {
                 self.gc();
             }
-            result
+            result as *mut T
         }
     }
 

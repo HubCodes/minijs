@@ -28,12 +28,29 @@ impl Vm {
               Push boolean object reference into stack
              */
             IR::PushBool { value } => {
-                let mut object = self.allocator.alloc(size_of::<Object>());
-                Object::bool(object, value);
-                self.stack.push(Reference::Obj(object));
+                let mut object = self.alloc();
+                Object::init_bool(object, value);
+                self.push_ref(object);
+            },
+
+            /*
+              Push int object reference into stack
+             */
+            IR::PushInt { value } => {
+                let mut object = self.alloc();
+                Object::init_int(object, value);
+                self.push_ref(object);
             },
 
             _ => (),
         }
+    }
+
+    fn alloc(&mut self) -> *mut Object {
+        self.allocator.alloc(size_of::<Object>())
+    }
+
+    fn push_ref(&mut self, obj: *mut Object) {
+        self.stack.push(Reference::Obj(obj));
     }
 }
