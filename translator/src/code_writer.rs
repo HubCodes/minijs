@@ -23,7 +23,8 @@ impl CodeWriter {
     }
 
     pub fn push_ctxt(&mut self, symbol: Symbol, args: Option<Vec<Symbol>>) {
-        self.trans_stack.push(BasicBlock::new(symbol, args));
+        let parent = self.trans_stack.last().map(|x| x.symbol.clone());
+        self.trans_stack.push(BasicBlock::new(parent, symbol, args));
     }
 
     pub fn pop_ctxt(&mut self) {

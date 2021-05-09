@@ -42,14 +42,19 @@ pub enum IR {
 
 #[derive(Clone, Debug)]
 pub struct BasicBlock {
+    pub parent: Option<Symbol>,
     pub symbol: Symbol,
     pub codes: Vec<IR>,
     pub args: Option<Vec<Symbol>>,
 }
 
 impl BasicBlock {
-    pub fn new(symbol: Symbol, args: Option<Vec<Symbol>>) -> BasicBlock {
-        BasicBlock { symbol, args, codes: Vec::new() }
+    pub fn new(
+        parent: Option<Symbol>,
+        symbol: Symbol,
+        args: Option<Vec<Symbol>>
+    ) -> BasicBlock {
+        BasicBlock { parent, symbol, args, codes: Vec::new() }
     }
 
     pub fn push(&mut self, ir: IR) {
