@@ -24,8 +24,8 @@ impl Translator {
     }
 
     fn block(&mut self, block: Block) {
-        self.code_writer.push_ctxt(block.sym, None);
-        block.into_iter().for_each(|x| self.stmt(x));
+        self.code_writer.push_ctxt(block.symbol, None);
+        block.body.into_iter().for_each(|x| self.stmt(x));
         self.code_writer.pop_ctxt();
     }
 
@@ -164,7 +164,7 @@ impl Translator {
         self.expr(cond);
         self.code_writer.write(IR::JumpCond {
             on_true: Box::new(then.symbol.clone()),
-            on_false: els.map(|x| Box::new(x.symbol)),
+            on_false: (&els).as_ref().map(|x| Box::new(x.symbol.clone())),
         });
         self.block(*then);
         if let Some(else_block) = els {
