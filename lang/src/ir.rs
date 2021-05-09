@@ -1,6 +1,8 @@
 use crate::ast::Symbol;
 use std::collections::HashMap;
+use std::iter::FromIterator;
 
+#[derive(Clone, Debug)]
 pub enum IR {
     Pop,
     PushBool { value: bool },
@@ -38,6 +40,7 @@ pub enum IR {
     Assign,
 }
 
+#[derive(Clone, Debug)]
 pub struct BasicBlock {
     pub symbol: Symbol,
     pub codes: Vec<IR>,
@@ -65,5 +68,9 @@ impl ByteCode {
 
     pub fn add(&mut self, bb: BasicBlock) {
         self.code.insert(bb.symbol.clone(), bb);
+    }
+
+    pub fn serialize(&self) -> Vec<(&Symbol, &BasicBlock)> {
+        Vec::from_iter(self.code.iter())
     }
 }

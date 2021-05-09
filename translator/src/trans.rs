@@ -7,6 +7,10 @@ pub struct Translator {
 }
 
 impl Translator {
+    pub fn new() -> Translator {
+        Translator { code_writer: CodeWriter::new() }
+    }
+    
     pub fn trans(&mut self, ast: Program) -> ByteCode {
         self.code_writer.push_ctxt(Symbol::new(-1, "<root>"), None);
         self.stmt(ast.stmt);
