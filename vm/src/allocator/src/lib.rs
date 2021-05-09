@@ -13,7 +13,7 @@ impl Allocator {
         unsafe {
             let result = self.last;
             let next_last = next_aligned_ptr(self.last.add(size));
-            if self.ptr.add(self.size as usize) > next_last - THRESHOLD && gc_able {
+            if self.ptr.add(self.size as usize) > next_last.sub(THRESHOLD) && gc_able {
                 self.gc();
             }
             result as *mut T
