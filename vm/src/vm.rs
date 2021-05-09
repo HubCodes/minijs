@@ -28,7 +28,7 @@ impl Vm {
               Push boolean object reference into stack
              */
             IR::PushBool { value } => {
-                let mut object = self.alloc();
+                let mut object = self.alloc_primitive();
                 Object::init_bool(object, value);
                 self.push_ref(object);
             },
@@ -37,7 +37,7 @@ impl Vm {
               Push int object reference into stack
              */
             IR::PushInt { value } => {
-                let mut object = self.alloc();
+                let mut object = self.alloc_primitive();
                 Object::init_int(object, value);
                 self.push_ref(object);
             },
@@ -46,7 +46,7 @@ impl Vm {
               Push string object reference into stack
              */
             IR::PushString { value } => {
-                let mut object = self.alloc();
+                let mut object = self.alloc_primitive();
                 Object::init_string(object, value);
                 self.push_ref(object);
             }
@@ -55,8 +55,8 @@ impl Vm {
         }
     }
 
-    fn alloc(&mut self) -> *mut Object {
-        self.allocator.alloc(size_of::<Object>())
+    fn alloc_primitive(&mut self) -> *mut Object {
+        self.allocator.alloc(size_of::<Object>(), false)
     }
 
     fn push_ref(&mut self, obj: *mut Object) {
