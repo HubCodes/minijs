@@ -15,7 +15,7 @@ impl CodeWriter {
     }
 
     pub fn emit_bytecode(&self) -> ByteCode {
-        unimplemented!();
+        self.bytecode.clone()
     }
 
     pub fn write(&mut self, inst: IR) {

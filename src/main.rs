@@ -3,7 +3,7 @@ use translator::trans::Translator;
 
 fn main() {
     let code =
-        "x.y.z;";
+        "let x = function(y){ y * 2; };";
     let ast = parse(code);
     let mut translator = Translator::new();
     match ast {

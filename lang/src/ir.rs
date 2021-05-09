@@ -57,6 +57,7 @@ impl BasicBlock {
     }
 }
 
+#[derive(Clone)]
 pub struct ByteCode {
     code: HashMap<Symbol, BasicBlock>,
 }
