@@ -42,6 +42,15 @@ impl Vm {
                 self.push_ref(object);
             },
 
+            /*
+              Push string object reference into stack
+             */
+            IR::PushString { value } => {
+                let mut object = self.alloc();
+                Object::init_string(object, value);
+                self.push_ref(object);
+            }
+
             _ => (),
         }
     }

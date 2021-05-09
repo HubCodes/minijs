@@ -3,7 +3,8 @@ use std::collections::HashMap;
 use std::ptr::null_mut;
 
 enum Data {
-    Obj { data: HashMap<String, Object> },
+    Obj(HashMap<String, Object>),
+    Ref(Symbol),
     Primitive(Primitive),
 }
 
@@ -11,6 +12,7 @@ enum Primitive {
     Int(i32),
     Double(f64),
     Boolean(bool),
+    String(String),
 }
 
 pub struct Object {
@@ -30,6 +32,13 @@ impl Object {
         unsafe {
             (*obj).prototype = null_mut();
             (*obj).data = Data::Primitive(Primitive::Int(value));
+        }
+    }
+
+    pub fn init_string(obj: *mut Object, value: String) {
+        unsafe {
+            (*obj).prototype = null_mut();
+            (*obj).data = Data::Primitive(Primitive::String(value));
         }
     }
 }
