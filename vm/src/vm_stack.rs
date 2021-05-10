@@ -5,8 +5,8 @@ pub struct VmStack {
 }
 
 impl VmStack {
-    pub fn pop(&mut self) {
-        self.stack.pop();
+    pub fn pop(&mut self) -> Option<Reference> {
+        self.stack.pop()
     }
 
     pub fn push(&mut self, item: Reference) {

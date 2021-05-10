@@ -22,7 +22,9 @@ impl Vm {
             /*
               Pop Top of stack
              */
-            IR::Pop => self.stack.pop(),
+            IR::Pop => {
+                self.stack.pop();
+            },
 
             /*
               Push boolean object reference into stack
@@ -49,7 +51,34 @@ impl Vm {
                 let mut object = self.alloc_primitive();
                 Object::init_string(object, value);
                 self.push_ref(object);
-            }
+            },
+
+            /*
+              Pop stack kv_count times, and make object by items
+             */
+            IR::MakeObject { kv_count } => {
+                /*
+                  kv_count indicates size of key-value pair
+                 */
+                let kv_vec: Vec<Option<Reference>> = self.pop_many(kv_count * 2);
+                let mut object = self.alloc_primitive();
+                let mut kv_pair_vec: Vec<(String, Reference)> = Vec::new();
+                for i in kv_vec.len() / 2 {
+                    let key: Option<&Reference> = kv_vec.get(i);
+                    let key = match key {
+                        Some(Reference::Obj(obj)) => obj.get_string(),
+                        _ => None,
+                    };
+                    let value: Option<&Reference> = kv_vec.get(i + 1);
+                    if let (Some(key), Some(value)) = (key, value) {
+                        kv_pair_vec.push((key.clone(), (*value).clone()));
+                    } else {
+                        panic!("Key is not string");
+                    }
+                }
+                Object::init_object(object, kv_pair_vec);
+                self.push_ref(object);
+            },
 
             _ => (),
         }
@@ -61,5 +90,13 @@ impl Vm {
 
     fn push_ref(&mut self, obj: *mut Object) {
         self.stack.push(Reference::Obj(obj));
+    }
+
+    fn pop_many(&mut self, count: usize) -> Vec<Option<Reference>> {
+        let mut result = Vec::new();
+        for _ in count {
+            result.push(self.stack.pop());
+        }
+        result
     }
 }
